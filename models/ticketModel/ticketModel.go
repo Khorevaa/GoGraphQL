@@ -10,7 +10,7 @@ var (
 )
 
 type Ticket  struct {
-	ID int
+	ID string
 }
 
 func init() {

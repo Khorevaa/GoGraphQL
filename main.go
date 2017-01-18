@@ -7,6 +7,7 @@ import (
 
 	"github.com/graphql-go/graphql"
 	"github.com/NiciiA/GoGraphQL/models/ticketModel"
+	"github.com/NiciiA/GoGraphQL/services/ticketService"
 )
 
 var (
@@ -14,13 +15,15 @@ var (
 	ticketType *graphql.Object
 )
 
+var ticketServiceVar = ticketService.TicketService{}
+
 func init() {
 	ticketType = graphql.NewObject(graphql.ObjectConfig{
 		Name:        "Ticket",
 		Description: "A Ticket",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
-				Type:        graphql.NewNonNull(graphql.Int),
+				Type:        graphql.NewNonNull(graphql.String),
 				Description: "The id of the ticket.",
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					if ticket, ok := p.Source.(ticketModel.Ticket); ok {
@@ -37,7 +40,7 @@ func init() {
 			"allTickets": &graphql.Field{
 				Type: graphql.NewList(ticketType),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					return getAll(), nil
+					return ticketServiceVar.GetAll(), nil
 				},
 			},
 		},
@@ -58,10 +61,4 @@ func main() {
 	})
 	fmt.Println("Now server is running on port 8080")
 	http.ListenAndServe(":8080", nil)
-}
-
-func getAll() []ticketModel.Ticket {
-	var TicketList []ticketModel.Ticket
-	TicketList = append(TicketList, ticketModel.Ticket{ID: 1}, ticketModel.Ticket{ID: 2})
-	return TicketList
 }
