@@ -7,10 +7,10 @@ import (
 
 type TicketType struct { }
 
-func (t *TicketType) GetType() *graphql.Object  {
-	var ticketType = graphql.NewObject(graphql.ObjectConfig{
+func (t TicketType) GetType() *graphql.Object  {
+	return graphql.NewObject(graphql.ObjectConfig{
 		Name:        "Ticket",
-		Description: "A Ticket",
+		Description: "A Ticket response",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
 				Type:        graphql.NewNonNull(graphql.String),
@@ -24,5 +24,4 @@ func (t *TicketType) GetType() *graphql.Object  {
 			},
 		},
 	})
-	return ticketType;
 }
