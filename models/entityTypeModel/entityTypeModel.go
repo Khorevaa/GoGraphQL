@@ -2,6 +2,10 @@ package entityTypesModel
 
 import (
 	"strconv"
+	"database/sql"
+	"github.com/NiciiA/GoGraphQL/database/mariaDB"
+	"log"
+	"fmt"
 )
 
 type EntityType  struct {
@@ -9,21 +13,33 @@ type EntityType  struct {
 	Key string
 	Name string
 	ClassName string
-	Type int
+	Type string
 	Disabled bool
+	CreatedDate string
+	ModifiedDate string
+}
+
+func (e *EntityType) Create() {
+	var res sql.Result = mariaDB.Insert(e.Insert())
+	id, err := res.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+	e.ID = strconv.FormatInt(id, 10)
 }
 
 func (e EntityType) Insert() string {
-	insertString := "INSERT INTO EntityTypes" + e.ID + e.setString()
+	insertString := "INSERT INTO entityTypes" + setString(e) + ", 'createdDate' = CURRENT_TIMESTAMP"
+	fmt.Println(insertString)
 	return insertString
 }
 
 func (e EntityType) Update() string {
-	updateString := "UPDATE EntityTypes WHERE 'id' = " + e.ID + e.setString()
+	updateString := "UPDATE entityTypes WHERE 'id' = " + e.ID + setString(e)
 	return updateString
 }
 
-func (e EntityType) setString() string {
-	setString := " SET 'key' = " + e.Key + " SET 'name' = " + e.Name + " SET 'className' = " + e.ClassName + " SET 'type' = " + strconv.Itoa(e.Type) + " SET 'disabled' = " + strconv.FormatBool(e.Disabled)
+func setString(e EntityType) string {
+	setString := " SET 'key' = '" + e.Key + "', 'name' = '" + e.Name + "', 'className' = '" + e.ClassName + "', 'type' = '" + e.Type + "', 'disabled' = " + strconv.FormatBool(e.Disabled) + ", 'modifiedDate' = CURRENT_TIMESTAMP"
 	return setString
 }

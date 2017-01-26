@@ -10,73 +10,65 @@ import (
 	"github.com/NiciiA/GoGraphQL/types/ticketType"
 	"github.com/NiciiA/GoGraphQL/types/entityTypesType"
 	"github.com/NiciiA/GoGraphQL/services/entityTypesService"
+	"github.com/NiciiA/GoGraphQL/models/entityTypeModel"
+	"time"
+	"github.com/mnmtanish/go-graphiql"
 )
 
 var (
 	Schema graphql.Schema
-	ticketServiceVar = ticketService.TicketService{}
-	ticketTypeVar = ticketType.TicketType{}
-	entityTypesServiceVar = entityTypesService.EntityTypesService{}
-	entityTypesTypeVar = entityTypesType.EntityTypesType{}
 )
 
 func init() {
 	mutationType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Mutation",
 		Fields: graphql.Fields{
-			/*
-			"entityType": &graphql.Field{
-				Type: entityTypesTypeVar.GetType(), // the return type for this field
+			"createEntityType": &graphql.Field{
+				Type: entityTypesType.Type,
 				Args: graphql.FieldConfigArgument{
-					"text": &graphql.ArgumentConfig{
+					"key": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
+					},
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"type": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"disabled": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Boolean),
 					},
 				},
 				Resolve: func(params graphql.ResolveParams) (interface{}, error) {
 
-					// marshall and cast the argument value
-					text, _ := params.Args["text"].(string)
+					key, _ := params.Args["key"].(string)
+					name, _ := params.Args["name"].(string)
+					entityType, _ := params.Args["type"].(string)
+					disabled, _ := params.Args["disabled"].(bool)
 
-					// figure out new id
-					newID := RandStringRunes(8)
+					var newEntity entityTypesModel.EntityType = entityTypesModel.EntityType{ID: "", Key: key, Name: name, Type: entityType, Disabled: disabled, ClassName: "com.projectaton.entityTypes." + key, CreatedDate: time.Now().String(), ModifiedDate: time.Now().String()}
+					newEntity.Create()
 
-					// perform mutation operation here
-					// for e.g. create a Todo and save to DB.
-					newTodo := Todo{
-						ID:   newID,
-						Text: text,
-						Done: false,
-						AccountID: 1,
-					}
-
-					TodoList = append(TodoList, newTodo)
-
-					// return the new Todo object that we supposedly save to DB
-					// Note here that
-					// - we are returning a `Todo` struct instance here
-					// - we previously specified the return Type to be `todoType`
-					// - `Todo` struct maps to `todoType`, as defined in `todoType` ObjectConfig`
-					return newTodo, nil
+					return newEntity, nil
 				},
 			},
-			*/
 		},
 	})
 	queryType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Query",
 		Fields: graphql.Fields{
 			"allTickets": &graphql.Field{
-				Type: graphql.NewList(ticketTypeVar.GetType()),
+				Type: graphql.NewList(ticketType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return ticketServiceVar.GetAll(), nil
+					return ticketService.GetAll(), nil
 				},
 			},
 			"allEntityTypes": &graphql.Field{
-				Type: graphql.NewList(entityTypesTypeVar.GetType()),
+				Type: graphql.NewList(entityTypesType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return entityTypesServiceVar.GetAll(), nil
+					// curl -g 'http://localhost:8080/graphql?query={allEntityTypes{id,key,name,className,type,disabled,createdDate,modifiedDate}}'
+					return entityTypesService.GetAll(), nil
 				},
 			},
 		},
@@ -88,14 +80,32 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-		query := r.URL.Query()["query"][0]
-		result := graphql.Do(graphql.Params{
-			Schema: Schema,
-			RequestString: query,
-		})
-		json.NewEncoder(w).Encode(result)
-	})
+	http.HandleFunc("/graphql", serveGraphQL(Schema))
+	http.HandleFunc("/", graphiql.ServeGraphiQL)
 	fmt.Println("Now server is running on port 8080")
 	http.ListenAndServe(":8080", nil)
+}
+
+func serveGraphQL(s graphql.Schema) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sendError := func(err error) {
+			w.WriteHeader(500)
+			w.Write([]byte(err.Error()))
+		}
+
+		req := &graphiql.Request{}
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			sendError(err)
+			return
+		}
+
+		res := graphql.Do(graphql.Params{
+			Schema:        s,
+			RequestString: req.Query,
+		})
+
+		if err := json.NewEncoder(w).Encode(res); err != nil {
+			sendError(err)
+		}
+	}
 }
