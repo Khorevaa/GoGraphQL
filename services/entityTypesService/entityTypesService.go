@@ -17,8 +17,8 @@ func SelectAllUndisabledStatement() string {
 	return SelectAllStatement() + " " + "WHERE disabled = 0"
 }
 
-func GetAll() []entityTypesModel.EntityType {
-	var entityTypes []entityTypesModel.EntityType
+func GetAll() []entityTypeModel.EntityType {
+	var entityTypes []entityTypeModel.EntityType
 	var rows *sql.Rows = mariaDB.Select(SelectAllUndisabledStatement())
 	for rows.Next() {
 		var id int
@@ -33,7 +33,7 @@ func GetAll() []entityTypesModel.EntityType {
 			log.Fatal(err)
 			fmt.Println(err)
 		}
-		entityTypes = append(entityTypes, entityTypesModel.EntityType{ID: strconv.Itoa(id), Key: key, Name: name, ClassName: className, Type: entityType, Disabled: disabled, CreatedDate: createdDate, ModifiedDate: modifiedDate})
+		entityTypes = append(entityTypes, entityTypeModel.EntityType{ID: strconv.Itoa(id), Key: key, Name: name, ClassName: className, Type: entityType, Disabled: disabled, CreatedDate: createdDate, ModifiedDate: modifiedDate})
 	}
 	rows.Close()
 	return entityTypes
