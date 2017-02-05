@@ -19,6 +19,8 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/type/newsType"
 	"github.com/NiciiA/GoGraphQL/domain/type/orgUnitType"
 	"github.com/NiciiA/GoGraphQL/dataaccess/entityDao"
+	"github.com/NiciiA/GoGraphQL/domain/type/activityType"
+	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
 )
 
 var (
@@ -73,16 +75,16 @@ func init() {
 				Type: entityType.Type,
 			},
 			"pushEntityFile": &graphql.Field{
-				Type: entityType.Type,
+				Type: fileType.Type,
 			},
 			"removeEntityFile": &graphql.Field{
-				Type: entityType.Type,
+				Type: fileType.Type,
 			},
 			"pushEntityActivity": &graphql.Field{
-				Type: entityType.Type,
+				Type: activityType.Type,
 			},
 			"removeEntityActivity": &graphql.Field{
-				Type: entityType.Type,
+				Type: activityType.Type,
 			},
 			"createGroup": &graphql.Field{
 				Type: groupType.Type,
@@ -109,16 +111,16 @@ func init() {
 				Type: newsType.Type,
 			},
 			"pushNewsFile": &graphql.Field{
-				Type: newsType.Type,
+				Type: fileType.Type,
 			},
 			"removeNewsFile": &graphql.Field{
-				Type: newsType.Type,
+				Type: fileType.Type,
 			},
 			"removeNewsComment": &graphql.Field{
-				Type: newsType.Type,
+				Type: activityType.Type,
 			},
 			"pushNewsComment": &graphql.Field{
-				Type: newsType.Type,
+				Type: activityType.Type,
 			},
 			"createOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
