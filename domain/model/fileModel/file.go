@@ -9,7 +9,7 @@ type File  struct {
 	ModifiedDate string `bson:"modifiedDate" json:"modifiedDate"`
 	ReferenceClass string `bson:"referenceClass" json:"referenceClass"`
 	ReferenceId string `bson:"referenceId" json:"referenceId"`
-	File string `bson:"file" json:"file"`
+	FilePath string `bson:"filePath" json:"filePath"`
 	FileName string `bson:"fileName" json:"fileName"`
 	FileContent string `bson:"fileContent" json:"fileContent"`
 	Creator string `bson:"creator" json:"creator"`

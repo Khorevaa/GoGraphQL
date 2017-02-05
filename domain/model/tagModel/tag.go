@@ -8,5 +8,5 @@ type Tag  struct {
 	CreatedDate string `bson:"createdDate" json:"createdDate"`
 	ModifiedDate string `bson:"modifiedDate" json:"modifiedDate"`
 	Name string `bson:"name" json:"name"`
-	Style string `bson:"stye" json:"stye"`
+	Style string `bson:"style" json:"style"`
 }

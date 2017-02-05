@@ -73,10 +73,10 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			},
 		},
 		"files": &graphql.Field{
-			Type: graphql.NewList(fileType.Type),
+			Type: fileType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if news, ok := p.Source.(newsModel.News); ok {
-					return []string{news.ID.Hex()}, nil
+					return news.ID.Hex(), nil
 				}
 				return nil, nil
 			},

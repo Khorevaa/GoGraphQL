@@ -71,10 +71,10 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			},
 		},
 		"files": &graphql.Field{
-			Type: graphql.NewList(fileType.Type),
+			Type: fileType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if entity, ok := p.Source.(entityModel.Entity); ok {
-					return []string{entity.ID.Hex()}, nil
+					return entity.ID.Hex(), nil
 				}
 				return nil, nil
 			},

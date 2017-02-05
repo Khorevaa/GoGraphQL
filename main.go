@@ -109,16 +109,16 @@ func init() {
 				Type: newsType.Type,
 			},
 			"pushNewsFile": &graphql.Field{
-				Type: entityType.Type,
+				Type: newsType.Type,
 			},
 			"removeNewsFile": &graphql.Field{
-				Type: entityType.Type,
+				Type: newsType.Type,
 			},
 			"removeNewsComment": &graphql.Field{
-				Type: entityType.Type,
+				Type: newsType.Type,
 			},
 			"pushNewsComment": &graphql.Field{
-				Type: entityType.Type,
+				Type: newsType.Type,
 			},
 			"createOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,

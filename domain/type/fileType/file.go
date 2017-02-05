@@ -6,8 +6,8 @@ import (
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Category",
-	Description: "A Category response",
+	Name:        "File",
+	Description: "A File response",
 	Fields: graphql.Fields{
 		"_id": &graphql.Field{
 			Type: graphql.String,
@@ -33,7 +33,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"referenceId": &graphql.Field{
 			Type: graphql.String,
 		},
-		"file": &graphql.Field{
+		"filePath": &graphql.Field{
 			Type: graphql.String,
 		},
 		"fileName": &graphql.Field{
