@@ -1,19 +1,19 @@
-package priorityType
+package orgUnitType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/priorityModel"
+	"github.com/NiciiA/GoGraphQL/domain/model/orgUnitModel"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Priority",
-	Description: "A Priority response",
+	Name:        "OrgUnit",
+	Description: "An OrgUnit response",
 	Fields: graphql.Fields{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if priority, ok := p.Source.(priorityModel.Priority); ok {
-					return priority.ID.Hex(), nil
+				if orgUnit, ok := p.Source.(orgUnitModel.OrgUnit); ok {
+					return orgUnit.ID.Hex(), nil
 				}
 				return nil, nil
 			},
@@ -28,7 +28,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.String,
 		},
 		"name": &graphql.Field{
-			Type: graphql.NewNonNull(graphql.String),
+			Type: graphql.String,
 		},
 	},
 })

@@ -1,19 +1,19 @@
-package groupType
+package fileType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
+	"github.com/NiciiA/GoGraphQL/domain/model/fileModel"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "Group",
-	Description: "A Group response",
+	Name:        "Category",
+	Description: "A Category response",
 	Fields: graphql.Fields{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if group, ok := p.Source.(groupModel.Group); ok {
-					return group.ID.Hex(), nil
+				if file, ok := p.Source.(fileModel.File); ok {
+					return file.ID.Hex(), nil
 				}
 				return nil, nil
 			},
@@ -27,7 +27,19 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"modifiedDate": &graphql.Field{
 			Type: graphql.String,
 		},
-		"name": &graphql.Field{
+		"referenceClass": &graphql.Field{
+			Type: graphql.String,
+		},
+		"referenceId": &graphql.Field{
+			Type: graphql.String,
+		},
+		"file": &graphql.Field{
+			Type: graphql.String,
+		},
+		"fileName": &graphql.Field{
+			Type: graphql.String,
+		},
+		"fileContent": &graphql.Field{
 			Type: graphql.String,
 		},
 	},

@@ -1,8 +1,8 @@
-package categoryModel
+package orgUnitModel
 
 import "gopkg.in/mgo.v2/bson"
 
-type Category  struct {
+type OrgUnit  struct {
 	ID bson.ObjectId `bson:"_id" json:"_id"`
 	Disabled bool `bson:"disabled" json:"disabled"`
 	CreatedDate string `bson:"createdDate" json:"createdDate"`
