@@ -2,15 +2,11 @@ package mongoAccess
 
 import "gopkg.in/mgo.v2"
 
-var session, nil = mgo.Dial("mongodb://localhost")
+var Session, nil = mgo.Dial("mongodb://localhost")
 
-func GetSession() *mgo.Session {
-	return session
+func GetDatabase(s *mgo.Session) *mgo.Database {
+	return s.DB("atongraphql");
 }
-
-func GetDatabase() *mgo.Database {
-	return GetSession().DB("atongraphql");
-}
-func GetCollection(collectionName string) *mgo.Collection {
-	return GetDatabase().C(collectionName);
+func GetCollection(s *mgo.Session, collectionName string) *mgo.Collection {
+	return GetDatabase(s).C(collectionName);
 }

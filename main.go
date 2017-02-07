@@ -187,8 +187,9 @@ func init() {
 				Type: graphql.NewList(entityType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					entityList := []entityModel.Entity{}
-					return entityDao.GetAll().All(&entityList), nil
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
+					entityDao.GetAll().All(&entityList)
+					return entityList, nil
+					// curl -g 'http://localhost:8080/graphql?query={entityList{id}}'
 					// return entityModel.Entity{CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
 				},
 			},
@@ -253,7 +254,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
-
+						return nil, nil
 					}
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
@@ -274,7 +275,8 @@ func init() {
 						return nil, nil
 					}
 					entity := entityModel.Entity{}
-					return entityDao.GetById(bson.ObjectIdHex(idQuery)).One(&entity), nil
+					entityDao.GetById(bson.ObjectIdHex(idQuery)).One(&entity)
+					return entity, nil
 				},
 			},
 			"group": &graphql.Field{

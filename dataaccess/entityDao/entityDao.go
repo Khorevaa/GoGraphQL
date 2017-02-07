@@ -9,8 +9,10 @@ import (
 
 var collectionName = "entity"
 
+var session *mgo.Session = mongoAccess.Session.Clone()
+
 func GetCollection() *mgo.Collection {
-	return mongoAccess.GetCollection(collectionName)
+	return mongoAccess.GetCollection(session, collectionName)
 }
 
 func GetById(id bson.ObjectId) *mgo.Query {
