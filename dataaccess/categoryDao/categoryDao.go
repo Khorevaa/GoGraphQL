@@ -11,3 +11,7 @@ func GetByKey(key string) categoryModel.Category {
 func AddCategory(c categoryModel.Category) {
 	CategoryList[c.Name] = c
 }
+
+func init() {
+	AddCategory(categoryModel.Category{Name: "catxyc"})
+}

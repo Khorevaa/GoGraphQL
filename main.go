@@ -21,8 +21,6 @@ import (
 	"github.com/NiciiA/GoGraphQL/dataaccess/entityDao"
 	"github.com/NiciiA/GoGraphQL/domain/type/activityType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
-	"github.com/NiciiA/GoGraphQL/dataaccess/categoryDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/categoryModel"
 )
 
 var (
@@ -370,7 +368,6 @@ func init() {
 }
 
 func main() {
-	categoryDao.AddCategory(categoryModel.Category{Name: "catxyc"})
 	http.HandleFunc("/graphql", serveGraphQL(Schema))
 	http.HandleFunc("/", graphiql.ServeGraphiQL)
 	fmt.Println("Now server is running on port 8080")
