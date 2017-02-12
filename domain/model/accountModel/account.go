@@ -11,5 +11,6 @@ type Account  struct {
 	Password string `bson:"password" json:"password"`
 	EMail string `bson:"eMail" json:"eMail"`
 	Phone string `bson:"phone" json:"phone"`
-	Roles string `bson:"roles" json:"roles"`
+	Roles []string `bson:"roles" json:"roles"`
+	Groups []string `bson:"groups" json:"groups"`
 }

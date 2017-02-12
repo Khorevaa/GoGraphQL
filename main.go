@@ -21,6 +21,8 @@ import (
 	"github.com/NiciiA/GoGraphQL/dataaccess/entityDao"
 	"github.com/NiciiA/GoGraphQL/domain/type/activityType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
+	"github.com/NiciiA/GoGraphQL/domain/type/jwtType"
+	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
 )
 
 var (
@@ -38,6 +40,15 @@ func init() {
 	mutationType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Mutation",
 		Fields: graphql.Fields{
+			"auth": &graphql.Field{
+				Type: jwtType.Type,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return accountModel.Account{UserName:"username"}, nil
+				},
+			},
+			"register": &graphql.Field{
+				Type: jwtType.Type,
+			},
 			"createCategory": &graphql.Field{
 				Type: categoryType.Type,
 			},

@@ -9,7 +9,7 @@ import (
 
 var collectionName = "entity"
 
-var session *mgo.Session = mongoAccess.Session.Clone()
+var session *mgo.Session
 
 func GetCollection() *mgo.Collection {
 	return mongoAccess.GetCollection(session, collectionName)
@@ -33,4 +33,7 @@ func Delete(entity entityModel.Entity) {
 
 func GetAll() *mgo.Query {
 	return GetCollection().Find(bson.M{})
+}
+func init() {
+	session = mongoAccess.Session.Clone()
 }
