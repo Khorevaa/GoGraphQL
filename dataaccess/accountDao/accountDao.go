@@ -1,13 +1,13 @@
-package entityDao
+package accountDao
 
 import (
-	"github.com/NiciiA/GoGraphQL/dataaccess/mongoAccess"
 	"gopkg.in/mgo.v2"
+	"github.com/NiciiA/GoGraphQL/dataaccess/mongoAccess"
 	"gopkg.in/mgo.v2/bson"
-	"github.com/NiciiA/GoGraphQL/domain/model/entityModel"
+	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
 )
 
-var collectionName = "entity"
+var collectionName = "account"
 
 var session *mgo.Session
 
@@ -19,16 +19,16 @@ func GetById(id bson.ObjectId) *mgo.Query {
 	return GetCollection().FindId(id)
 }
 
-func Insert(entity entityModel.Entity) {
-	GetCollection().Insert(&entity)
+func Insert(account accountModel.Account) {
+	GetCollection().Insert(&account)
 }
 
-func Update(entity entityModel.Entity) {
-	GetCollection().Update(entity.ID, &entity)
+func Update(account accountModel.Account) {
+	GetCollection().Update(account.ID, &account)
 }
 
-func Delete(entity entityModel.Entity) {
-	GetCollection().Remove(entity.ID)
+func Delete(account accountModel.Account) {
+	GetCollection().Remove(account.ID)
 }
 
 func GetAll(query interface{}) *mgo.Query {

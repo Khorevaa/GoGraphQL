@@ -3,7 +3,7 @@ package accountModel
 import "gopkg.in/mgo.v2/bson"
 
 type Account  struct {
-	ID bson.ObjectId `bson:"_id" json:"_id"`
+	ID bson.ObjectId `bson:"_id,omitempty" json:"_id"`
 	Disabled bool `bson:"disabled" json:"disabled"`
 	CreatedDate string `bson:"createdDate" json:"createdDate"`
 	ModifiedDate string `bson:"modifiedDate" json:"modifiedDate"`

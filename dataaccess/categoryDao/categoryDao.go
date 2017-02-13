@@ -23,13 +23,36 @@ func GetByKey(key string) categoryModel.Category {
 
 func AddCategory(c categoryModel.Category) {
 	CategoryList[c.Name] = c
+	Insert(c)
+}
+
+func UpdateCategory(c categoryModel.Category) {
+	CategoryList[c.Name] = c
+	Update(c)
 }
 
 func init() {
 	session = mongoAccess.Session.Clone()
 	var catList []categoryModel.Category
-	GetCollection().Find(bson.M{}).All(&catList)
+	GetAll().All(&catList)
 	for _, cat := range catList {
 		AddCategory(cat)
 	}
+}
+
+func Insert(catgory categoryModel.Category) {
+	GetCollection().Insert(&catgory)
+}
+
+func Update(catgory categoryModel.Category) {
+	GetCollection().Update(catgory.ID, &catgory)
+}
+
+func Delete(catgory categoryModel.Category) {
+	delete(CategoryList, catgory.Name)
+	GetCollection().Remove(catgory.ID)
+}
+
+func GetAll() *mgo.Query {
+	return GetCollection().Find(bson.M{})
 }

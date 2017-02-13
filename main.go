@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 
 	"github.com/graphql-go/graphql"
 	"github.com/mnmtanish/go-graphiql"
@@ -23,6 +24,13 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
 	"github.com/NiciiA/GoGraphQL/domain/type/jwtType"
 	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/categoryDao"
+	"strconv"
+	"github.com/NiciiA/GoGraphQL/dataaccess/accountDao"
+	"github.com/NiciiA/GoGraphQL/domain/model/categoryModel"
+	"crypto/x509"
+	"time"
+	"log"
 )
 
 var (
@@ -36,27 +44,129 @@ var (
 	And Account Managment with REST
 
  */
+
+func validateEmail(email string) bool {
+	Re := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+	return Re.MatchString(email)
+}
+
 func init() {
 	mutationType := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Mutation",
 		Fields: graphql.Fields{
 			"auth": &graphql.Field{
 				Type: jwtType.Type,
+				Args: graphql.FieldConfigArgument{
+					"auth": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"password": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					return accountModel.Account{UserName:"username"}, nil
+					auth, _ := p.Args["auth"].(string)
+					password, _ := p.Args["password"].(string)
+					var account = accountModel.Account{}
+					account.Password = password
+					if validateEmail(auth) {
+						account.EMail = auth
+						accountDao.GetAll(account).One(&account)
+						return account, nil
+					} else if len(auth) == 10 {
+						if _, err := strconv.Atoi(auth); err == nil {
+							account.Phone = auth
+							accountDao.GetAll(account).One(&account)
+							return account, nil
+						}
+					}
+
+					return nil, nil
 				},
 			},
 			"register": &graphql.Field{
 				Type: jwtType.Type,
+				Args: graphql.FieldConfigArgument{
+					"auth": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"password": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					auth, _ := p.Args["auth"].(string)
+					password, _ := p.Args["password"].(string)
+					var account accountModel.Account = accountModel.Account{}
+					account.ID = bson.NewObjectId()
+					account.Password = password
+					if validateEmail(auth) {
+						account.EMail = auth
+						accountDao.Insert(account)
+						return account, nil
+					} else if len(auth) == 10 {
+						if _, err := strconv.Atoi(auth); err == nil {
+							account.Phone = auth
+							accountDao.Insert(account)
+							return account, nil
+						}
+					}
+					return nil, nil
+				},
 			},
 			"createCategory": &graphql.Field{
 				Type: categoryType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					category := categoryModel.Category{}
+					category.ID = bson.NewObjectId()
+					category.Disabled = false
+					category.CreatedDate = time.Now().Format(time.RFC3339)
+					category.ModifiedDate = time.Now().Format(time.RFC3339)
+					category.Name = name
+					categoryDao.AddCategory(category)
+					return  category, nil
+				},
 			},
 			"updateCategory": &graphql.Field{
 				Type: categoryType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"disabled": &graphql.ArgumentConfig{
+						Type: graphql.Boolean,
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					disabled, _ := p.Args["disabled"].(bool)
+					category := categoryModel.Category{}
+					category.Disabled = disabled
+					category.Name = name
+					categoryDao.UpdateCategory(category)
+					return  category, nil
+				},
 			},
 			"removeCategory": &graphql.Field{
 				Type: categoryType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					category := categoryModel.Category{}
+					category.Name = name
+					categoryDao.Delete(category)
+					return category, nil
+				},
 			},
 			"disableCategory": &graphql.Field{
 				Type: categoryType.Type,
@@ -184,7 +294,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// type == news oder entity
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
+					return categoryDao.CategoryList, nil
 				},
 			},
 			"contactList": &graphql.Field{
@@ -247,12 +357,9 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					idQuery, _ := p.Args["id"].(string)
-					if !bson.IsObjectIdHex(idQuery) {
-
-					}
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
+					idQuery, _ := p.Args["name"].(string)
+					// curl -g 'http://localhost:8080/graphql?query={category(name:"catName"){name}}'
+					return categoryDao.GetByKey(idQuery), nil
 				},
 			},
 			"contact": &graphql.Field{
