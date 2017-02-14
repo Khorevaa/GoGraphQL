@@ -8,4 +8,5 @@ type Category  struct {
 	CreatedDate string `bson:"createdDate" json:"createdDate"`
 	ModifiedDate string `bson:"modifiedDate" json:"modifiedDate"`
 	Name string `bson:"name" json:"name"`
+	Type string `bson:"type" json:"type"`
 }

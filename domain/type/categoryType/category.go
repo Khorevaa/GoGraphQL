@@ -30,5 +30,8 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"name": &graphql.Field{
 			Type: graphql.String,
 		},
+		"type": &graphql.Field{
+			Type: graphql.String,
+		},
 	},
 })

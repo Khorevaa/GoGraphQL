@@ -28,9 +28,7 @@ import (
 	"strconv"
 	"github.com/NiciiA/GoGraphQL/dataaccess/accountDao"
 	"github.com/NiciiA/GoGraphQL/domain/model/categoryModel"
-	"crypto/x509"
 	"time"
-	"log"
 )
 
 var (
@@ -139,16 +137,16 @@ func init() {
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
-					"disabled": &graphql.ArgumentConfig{
-						Type: graphql.Boolean,
+					"type": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
-					disabled, _ := p.Args["disabled"].(bool)
+					typeCat, _ := p.Args["type"].(string)
 					category := categoryModel.Category{}
-					category.Disabled = disabled
 					category.Name = name
+					category.Type = typeCat
 					categoryDao.UpdateCategory(category)
 					return  category, nil
 				},
@@ -170,6 +168,23 @@ func init() {
 			},
 			"disableCategory": &graphql.Field{
 				Type: categoryType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+					"disable": &graphql.ArgumentConfig{
+						Type: graphql.Boolean,
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					disable, _ := p.Args["disable"].(bool)
+					category := categoryModel.Category{}
+					category.Name = name
+					category.Disabled = disable
+					categoryDao.UpdateCategory(category)
+					return  category, nil
+				},
 			},
 			"createContact": &graphql.Field{
 				Type: contactType.Type,
@@ -294,7 +309,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// type == news oder entity
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return categoryDao.CategoryList, nil
+					return categoryDao.GetAll(), nil
 				},
 			},
 			"contactList": &graphql.Field{
@@ -308,7 +323,7 @@ func init() {
 				Type: graphql.NewList(entityType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					entityList := []entityModel.Entity{}
-					entityDao.GetAll().All(&entityList)
+					entityDao.GetAll(bson.M{}).All(&entityList)
 					return entityList, nil
 					// curl -g 'http://localhost:8080/graphql?query={entityList{id}}'
 					// return entityModel.Entity{CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
@@ -352,14 +367,14 @@ func init() {
 			"category": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
-					"id": &graphql.ArgumentConfig{
+					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					idQuery, _ := p.Args["name"].(string)
+					catName, _ := p.Args["name"].(string)
 					// curl -g 'http://localhost:8080/graphql?query={category(name:"catName"){name}}'
-					return categoryDao.GetByKey(idQuery), nil
+					return categoryDao.GetByKey(catName), nil
 				},
 			},
 			"contact": &graphql.Field{
