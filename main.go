@@ -118,15 +118,20 @@ func init() {
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
+					"type": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
+					typeCat, _ := p.Args["type"].(string)
 					category := categoryModel.Category{}
 					category.ID = bson.NewObjectId()
 					category.Disabled = false
 					category.CreatedDate = time.Now().Format(time.RFC3339)
 					category.ModifiedDate = time.Now().Format(time.RFC3339)
 					category.Name = name
+					category.Type = typeCat
 					categoryDao.AddCategory(category)
 					return  category, nil
 				},
@@ -144,8 +149,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
 					typeCat, _ := p.Args["type"].(string)
-					category := categoryModel.Category{}
-					category.Name = name
+					category := categoryDao.GetByKey(name)
 					category.Type = typeCat
 					categoryDao.UpdateCategory(category)
 					return  category, nil
@@ -160,8 +164,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
-					category := categoryModel.Category{}
-					category.Name = name
+					category := categoryDao.GetByKey(name)
 					categoryDao.Delete(category)
 					return category, nil
 				},
@@ -179,8 +182,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
 					disable, _ := p.Args["disable"].(bool)
-					category := categoryModel.Category{}
-					category.Name = name
+					category := categoryDao.GetByKey(name)
 					category.Disabled = disable
 					categoryDao.UpdateCategory(category)
 					return  category, nil
