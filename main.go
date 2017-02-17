@@ -29,6 +29,10 @@ import (
 	"github.com/NiciiA/GoGraphQL/dataaccess/accountDao"
 	"github.com/NiciiA/GoGraphQL/domain/model/categoryModel"
 	"time"
+	"github.com/NiciiA/GoGraphQL/dataaccess/groupDao"
+	"github.com/NiciiA/GoGraphQL/domain/type/permissionType"
+	"github.com/NiciiA/GoGraphQL/domain/model/orgUnitModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/orgUnitDao"
 )
 
 var (
@@ -226,15 +230,70 @@ func init() {
 			},
 			"createGroup": &graphql.Field{
 				Type: groupType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					group := groupModel.Group{}
+					group.ID = bson.NewObjectId()
+					group.Disabled = false
+					group.CreatedDate = time.Now().Format(time.RFC3339)
+					group.ModifiedDate = time.Now().Format(time.RFC3339)
+					group.Name = name
+					groupDao.AddGroup(group)
+					return  group, nil
+				},
 			},
 			"updateGroup": &graphql.Field{
 				Type: groupType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					group := groupDao.GetByKey(name)
+					group.Name = name
+					groupDao.UpdateGroup(group)
+					return  group, nil
+				},
 			},
 			"removeGroup": &graphql.Field{
 				Type: groupType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					group := groupDao.GetByKey(name)
+					groupDao.Delete(group)
+					return group, nil
+				},
 			},
 			"disableGroup": &graphql.Field{
 				Type: groupType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+					"disable": &graphql.ArgumentConfig{
+						Type: graphql.Boolean,
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					disable, _ := p.Args["disable"].(bool)
+					group := groupDao.GetByKey(name)
+					group.Disabled = disable
+					groupDao.UpdateGroup(group)
+					return  group, nil
+				},
 			},
 			"createNews": &graphql.Field{
 				Type: newsType.Type,
@@ -262,15 +321,70 @@ func init() {
 			},
 			"createOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					orgUnit := orgUnitModel.OrgUnit{}
+					orgUnit.ID = bson.NewObjectId()
+					orgUnit.Disabled = false
+					orgUnit.CreatedDate = time.Now().Format(time.RFC3339)
+					orgUnit.ModifiedDate = time.Now().Format(time.RFC3339)
+					orgUnit.Name = name
+					orgUnitDao.AddOrgUnit(orgUnit)
+					return  orgUnit, nil
+				},
 			},
 			"updateOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					orgUnit := orgUnitDao.GetByKey(name)
+					orgUnit.Name = name
+					orgUnitDao.UpdateOrgUnit(orgUnit)
+					return  orgUnit, nil
+				},
 			},
 			"removeOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					orgUnit := orgUnitDao.GetByKey(name)
+					orgUnitDao.Delete(orgUnit)
+					return orgUnit, nil
+				},
 			},
 			"disableOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+					"disable": &graphql.ArgumentConfig{
+						Type: graphql.Boolean,
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					disable, _ := p.Args["disable"].(bool)
+					orgUnit := orgUnitDao.GetByKey(name)
+					orgUnit.Disabled = disable
+					orgUnitDao.UpdateOrgUnit(orgUnit)
+					return  orgUnit, nil
+				},
 			},
 			"createPriority": &graphql.Field{
 				Type: priorityType.Type,
@@ -283,6 +397,18 @@ func init() {
 			},
 			"disablePriority": &graphql.Field{
 				Type: priorityType.Type,
+			},
+			"createPermission": &graphql.Field{
+				Type: permissionType.Type,
+			},
+			"updatePermission": &graphql.Field{
+				Type: permissionType.Type,
+			},
+			"removePermission": &graphql.Field{
+				Type: permissionType.Type,
+			},
+			"disablePermission": &graphql.Field{
+				Type: permissionType.Type,
 			},
 			"createTag": &graphql.Field{
 				Type: tagType.Type,
@@ -311,7 +437,9 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// type == news oder entity
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return categoryDao.GetAll(), nil
+					categoryList := []categoryModel.Category{}
+					categoryDao.GetAll().All(&categoryList)
+					return categoryList, nil
 				},
 			},
 			"contactList": &graphql.Field{
@@ -332,10 +460,12 @@ func init() {
 				},
 			},
 			"groupList": &graphql.Field{
-				Type: groupType.Type,
+				Type: graphql.NewList(groupType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
+					groupList := []groupModel.Group{}
+					groupDao.GetAll().All(&groupList)
+					return groupList, nil
 				},
 			},
 			"newsList": &graphql.Field{
@@ -361,6 +491,13 @@ func init() {
 			},
 			"tagList": &graphql.Field{
 				Type: tagType.Type,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
+					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
+				},
+			},
+			"permissionList": &graphql.Field{
+				Type: permissionType.Type,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
@@ -417,17 +554,14 @@ func init() {
 			"group": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
-					"id": &graphql.ArgumentConfig{
+					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					idQuery, _ := p.Args["id"].(string)
-					if !bson.IsObjectIdHex(idQuery) {
-
-					}
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
+					groupName, _ := p.Args["name"].(string)
+					// curl -g 'http://localhost:8080/graphql?query={category(name:"catName"){name}}'
+					return groupDao.GetByKey(groupName), nil
 				},
 			},
 			"news": &graphql.Field{
@@ -480,6 +614,22 @@ func init() {
 			},
 			"tag": &graphql.Field{
 				Type: tagType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+
+					}
+					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
+					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
+				},
+			},
+			"permission": &graphql.Field{
+				Type: permissionType.Type,
 				Args: graphql.FieldConfigArgument{
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),

@@ -40,17 +40,17 @@ func init() {
 	}
 }
 
-func Insert(catgory categoryModel.Category) {
-	GetCollection().Insert(&catgory)
+func Insert(category categoryModel.Category) {
+	GetCollection().Insert(&category)
 }
 
-func Update(catgory categoryModel.Category) {
-	GetCollection().Update(catgory.ID, &catgory)
+func Update(category categoryModel.Category) {
+	GetCollection().Update(category.ID, &category)
 }
 
-func Delete(catgory categoryModel.Category) {
-	delete(CategoryList, catgory.Name)
-	GetCollection().Remove(catgory.ID)
+func Delete(category categoryModel.Category) {
+	delete(CategoryList, category.Name)
+	GetCollection().Remove(category.ID)
 }
 
 func GetAll() *mgo.Query {
