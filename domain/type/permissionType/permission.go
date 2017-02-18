@@ -88,8 +88,8 @@ var UsertaskType *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 })
 
 var GeneralType *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
-	Name:        "PermissionU",
-	Description: "A PermissionU response",
+	Name:        "PermissionG",
+	Description: "A PermissionG response",
 	Fields: graphql.Fields{
 		"admin": &graphql.Field{
 			Type: graphql.Boolean,
