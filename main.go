@@ -143,6 +143,9 @@ func init() {
 			"updateCategory": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -151,9 +154,14 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
 					name, _ := p.Args["name"].(string)
 					typeCat, _ := p.Args["type"].(string)
-					category := categoryDao.GetByKey(name)
+					category := categoryDao.GetByKey(bson.ObjectIdHex(idQuery))
+					category.Name = name
 					category.Type = typeCat
 					categoryDao.UpdateCategory(category)
 					return  category, nil
@@ -162,13 +170,16 @@ func init() {
 			"removeCategory": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
+					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					name, _ := p.Args["name"].(string)
-					category := categoryDao.GetByKey(name)
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					category := categoryDao.GetByKey(bson.ObjectIdHex(idQuery))
 					categoryDao.Delete(category)
 					return category, nil
 				},
@@ -176,17 +187,20 @@ func init() {
 			"disableCategory": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
-						Type: graphql.String,
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
 					},
 					"disable": &graphql.ArgumentConfig{
-						Type: graphql.Boolean,
+						Type: graphql.NewNonNull(graphql.Boolean),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					name, _ := p.Args["name"].(string)
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
 					disable, _ := p.Args["disable"].(bool)
-					category := categoryDao.GetByKey(name)
+					category := categoryDao.GetByKey(bson.ObjectIdHex(idQuery))
 					category.Disabled = disable
 					categoryDao.UpdateCategory(category)
 					return  category, nil
@@ -250,13 +264,20 @@ func init() {
 			"updateGroup": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
 					name, _ := p.Args["name"].(string)
-					group := groupDao.GetByKey(name)
+					group := groupDao.GetByKey(bson.ObjectIdHex(idQuery))
 					group.Name = name
 					groupDao.UpdateGroup(group)
 					return  group, nil
@@ -265,13 +286,16 @@ func init() {
 			"removeGroup": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
+					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					name, _ := p.Args["name"].(string)
-					group := groupDao.GetByKey(name)
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					group := groupDao.GetByKey(bson.ObjectIdHex(idQuery))
 					groupDao.Delete(group)
 					return group, nil
 				},
@@ -279,17 +303,20 @@ func init() {
 			"disableGroup": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
-						Type: graphql.String,
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
 					},
 					"disable": &graphql.ArgumentConfig{
-						Type: graphql.Boolean,
+						Type: graphql.NewNonNull(graphql.Boolean),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					name, _ := p.Args["name"].(string)
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
 					disable, _ := p.Args["disable"].(bool)
-					group := groupDao.GetByKey(name)
+					group := groupDao.GetByKey(bson.ObjectIdHex(idQuery))
 					group.Disabled = disable
 					groupDao.UpdateGroup(group)
 					return  group, nil
@@ -341,13 +368,20 @@ func init() {
 			"updateOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
 				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
 					name, _ := p.Args["name"].(string)
-					orgUnit := orgUnitDao.GetByKey(name)
+					orgUnit := orgUnitDao.GetByKey(bson.ObjectIdHex(idQuery))
 					orgUnit.Name = name
 					orgUnitDao.UpdateOrgUnit(orgUnit)
 					return  orgUnit, nil
@@ -356,13 +390,16 @@ func init() {
 			"removeOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
+					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					name, _ := p.Args["name"].(string)
-					orgUnit := orgUnitDao.GetByKey(name)
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					orgUnit := orgUnitDao.GetByKey(bson.ObjectIdHex(idQuery))
 					orgUnitDao.Delete(orgUnit)
 					return orgUnit, nil
 				},
@@ -370,17 +407,20 @@ func init() {
 			"disableOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
-						Type: graphql.String,
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
 					},
 					"disable": &graphql.ArgumentConfig{
-						Type: graphql.Boolean,
+						Type: graphql.NewNonNull(graphql.Boolean),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					name, _ := p.Args["name"].(string)
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
 					disable, _ := p.Args["disable"].(bool)
-					orgUnit := orgUnitDao.GetByKey(name)
+					orgUnit := orgUnitDao.GetByKey(bson.ObjectIdHex(idQuery))
 					orgUnit.Disabled = disable
 					orgUnitDao.UpdateOrgUnit(orgUnit)
 					return  orgUnit, nil
@@ -478,8 +518,9 @@ func init() {
 			"orgUnitList": &graphql.Field{
 				Type: orgUnitType.Type,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
+					orgUnitList := []orgUnitModel.OrgUnit{}
+					orgUnitDao.GetAll().All(&orgUnitList)
+					return orgUnitList, nil
 				},
 			},
 			"priorityList": &graphql.Field{
@@ -506,14 +547,16 @@ func init() {
 			"category": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
+					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					catName, _ := p.Args["name"].(string)
-					// curl -g 'http://localhost:8080/graphql?query={category(name:"catName"){name}}'
-					return categoryDao.GetByKey(catName), nil
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					return categoryDao.GetByKey(bson.ObjectIdHex(idQuery)), nil
 				},
 			},
 			"contact": &graphql.Field{
@@ -540,8 +583,6 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					// return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -554,14 +595,17 @@ func init() {
 			"group": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
-					"name": &graphql.ArgumentConfig{
+					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					groupName, _ := p.Args["name"].(string)
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
 					// curl -g 'http://localhost:8080/graphql?query={category(name:"catName"){name}}'
-					return groupDao.GetByKey(groupName), nil
+					return groupDao.GetByKey(bson.ObjectIdHex(idQuery)), nil
 				},
 			},
 			"news": &graphql.Field{
@@ -574,7 +618,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
-
+						return nil, nil
 					}
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
@@ -590,10 +634,9 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
-
+						return nil, nil
 					}
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
+					return orgUnitDao.GetByKey(bson.ObjectIdHex(idQuery)), nil
 				},
 			},
 			"priority": &graphql.Field{
@@ -606,7 +649,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
-
+						return nil, nil
 					}
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
@@ -622,7 +665,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
-
+						return nil, nil
 					}
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
@@ -638,7 +681,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
-
+						return nil, nil
 					}
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil

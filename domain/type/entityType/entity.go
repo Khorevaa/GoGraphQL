@@ -10,6 +10,7 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/type/contactType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
 	"github.com/NiciiA/GoGraphQL/dataaccess/categoryDao"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -57,10 +58,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Description: "The category of the entity.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if entity, ok := p.Source.(entityModel.Entity); ok {
-					if (entity.Category == "xyc") {
-
-					}
-					return categoryDao.GetByKey("catxyc"), nil
+					return categoryDao.GetByKey(bson.ObjectIdHex(entity.Category)), nil
 				}
 				return nil, nil
 			},

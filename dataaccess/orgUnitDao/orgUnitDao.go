@@ -11,23 +11,23 @@ var collectionName = "orgUnit"
 
 var session *mgo.Session
 
-var OrgUnitList map[string]orgUnitModel.OrgUnit = make(map[string]orgUnitModel.OrgUnit)
+var OrgUnitList map[bson.ObjectId]orgUnitModel.OrgUnit = make(map[bson.ObjectId]orgUnitModel.OrgUnit)
 
 func GetCollection() *mgo.Collection {
 	return mongoAccess.GetCollection(session, collectionName)
 }
 
-func GetByKey(key string) orgUnitModel.OrgUnit {
+func GetByKey(key bson.ObjectId) orgUnitModel.OrgUnit {
 	return OrgUnitList[key]
 }
 
 func AddOrgUnit(c orgUnitModel.OrgUnit) {
-	OrgUnitList[c.Name] = c
+	OrgUnitList[c.ID] = c
 	Insert(c)
 }
 
 func UpdateOrgUnit(c orgUnitModel.OrgUnit) {
-	OrgUnitList[c.Name] = c
+	OrgUnitList[c.ID] = c
 	Update(c)
 }
 
@@ -49,7 +49,7 @@ func Update(orgUnit orgUnitModel.OrgUnit) {
 }
 
 func Delete(orgUnit orgUnitModel.OrgUnit) {
-	delete(OrgUnitList, orgUnit.Name)
+	delete(OrgUnitList, orgUnit.ID)
 	GetCollection().Remove(orgUnit.ID)
 }
 

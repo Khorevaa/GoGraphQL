@@ -11,23 +11,23 @@ var collectionName = "category"
 
 var session *mgo.Session
 
-var CategoryList map[string]categoryModel.Category = make(map[string]categoryModel.Category)
+var CategoryList map[bson.ObjectId]categoryModel.Category = make(map[bson.ObjectId]categoryModel.Category)
 
 func GetCollection() *mgo.Collection {
 	return mongoAccess.GetCollection(session, collectionName)
 }
 
-func GetByKey(key string) categoryModel.Category {
+func GetByKey(key bson.ObjectId) categoryModel.Category {
 	return CategoryList[key]
 }
 
 func AddCategory(c categoryModel.Category) {
-	CategoryList[c.Name] = c
+	CategoryList[c.ID] = c
 	Insert(c)
 }
 
 func UpdateCategory(c categoryModel.Category) {
-	CategoryList[c.Name] = c
+	CategoryList[c.ID] = c
 	Update(c)
 }
 
@@ -49,7 +49,7 @@ func Update(category categoryModel.Category) {
 }
 
 func Delete(category categoryModel.Category) {
-	delete(CategoryList, category.Name)
+	delete(CategoryList, category.ID)
 	GetCollection().Remove(category.ID)
 }
 

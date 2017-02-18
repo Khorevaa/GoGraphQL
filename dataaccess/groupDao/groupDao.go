@@ -11,23 +11,23 @@ var collectionName = "group"
 
 var session *mgo.Session
 
-var GroupList map[string]groupModel.Group = make(map[string]groupModel.Group)
+var GroupList map[bson.ObjectId]groupModel.Group = make(map[bson.ObjectId]groupModel.Group)
 
 func GetCollection() *mgo.Collection {
 	return mongoAccess.GetCollection(session, collectionName)
 }
 
-func GetByKey(key string) groupModel.Group {
+func GetByKey(key bson.ObjectId) groupModel.Group {
 	return GroupList[key]
 }
 
 func AddGroup(c groupModel.Group) {
-	GroupList[c.Name] = c
+	GroupList[c.ID] = c
 	Insert(c)
 }
 
 func UpdateGroup(c groupModel.Group) {
-	GroupList[c.Name] = c
+	GroupList[c.ID] = c
 	Update(c)
 }
 
@@ -49,7 +49,7 @@ func Update(group groupModel.Group) {
 }
 
 func Delete(group groupModel.Group) {
-	delete(GroupList, group.Name)
+	delete(GroupList, group.ID)
 	GetCollection().Remove(group.ID)
 }
 
