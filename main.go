@@ -33,6 +33,10 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/type/permissionType"
 	"github.com/NiciiA/GoGraphQL/domain/model/orgUnitModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/orgUnitDao"
+	"github.com/NiciiA/GoGraphQL/domain/model/priorityModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/priorityDao"
+	"github.com/NiciiA/GoGraphQL/domain/model/tagModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/tagDao"
 )
 
 var (
@@ -428,15 +432,83 @@ func init() {
 			},
 			"createPriority": &graphql.Field{
 				Type: priorityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					priority := priorityModel.Priority{}
+					priority.ID = bson.NewObjectId()
+					priority.Disabled = false
+					priority.CreatedDate = time.Now().Format(time.RFC3339)
+					priority.ModifiedDate = time.Now().Format(time.RFC3339)
+					priority.Name = name
+					priorityDao.AddPriority(priority)
+					return  priority, nil
+				},
 			},
 			"updatePriority": &graphql.Field{
 				Type: priorityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					name, _ := p.Args["name"].(string)
+					priority := priorityDao.GetByKey(bson.ObjectIdHex(idQuery))
+					priority.Name = name
+					priorityDao.UpdatePriority(priority)
+					return  priority, nil
+				},
 			},
 			"removePriority": &graphql.Field{
 				Type: priorityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					priority := priorityDao.GetByKey(bson.ObjectIdHex(idQuery))
+					priorityDao.Delete(priority)
+					return priority, nil
+				},
 			},
 			"disablePriority": &graphql.Field{
 				Type: priorityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"disable": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Boolean),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					disable, _ := p.Args["disable"].(bool)
+					priority := priorityDao.GetByKey(bson.ObjectIdHex(idQuery))
+					priority.Disabled = disable
+					priorityDao.UpdatePriority(priority)
+					return  priority, nil
+				},
 			},
 			"createPermission": &graphql.Field{
 				Type: permissionType.Type,
@@ -452,15 +524,93 @@ func init() {
 			},
 			"createTag": &graphql.Field{
 				Type: tagType.Type,
+				Args: graphql.FieldConfigArgument{
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"style": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					name, _ := p.Args["name"].(string)
+					style, _ := p.Args["style"].(string)
+					tag := tagModel.Tag{}
+					tag.ID = bson.NewObjectId()
+					tag.Disabled = false
+					tag.CreatedDate = time.Now().Format(time.RFC3339)
+					tag.ModifiedDate = time.Now().Format(time.RFC3339)
+					tag.Name = name
+					tag.Style = style
+					tagDao.AddTag(tag)
+					return  tag, nil
+				},
 			},
 			"updateTag": &graphql.Field{
 				Type: tagType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"name": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"style": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					name, _ := p.Args["name"].(string)
+					style, _ := p.Args["style"].(string)
+					tag := tagDao.GetByKey(bson.ObjectIdHex(idQuery))
+					tag.Name = name
+					tag.Style = style
+					tagDao.UpdateTag(tag)
+					return  tag, nil
+				},
 			},
 			"removeTag": &graphql.Field{
 				Type: tagType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					tag := tagDao.GetByKey(bson.ObjectIdHex(idQuery))
+					tagDao.Delete(tag)
+					return tag, nil
+				},
 			},
 			"disableTag": &graphql.Field{
 				Type: tagType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"disable": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Boolean),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					idQuery, _ := p.Args["id"].(string)
+					if !bson.IsObjectIdHex(idQuery) {
+						return nil, nil
+					}
+					disable, _ := p.Args["disable"].(bool)
+					tag := tagDao.GetByKey(bson.ObjectIdHex(idQuery))
+					tag.Disabled = disable
+					tagDao.UpdateTag(tag)
+					return  tag, nil
+				},
 			},
 		},
 	})
@@ -526,15 +676,17 @@ func init() {
 			"priorityList": &graphql.Field{
 				Type: priorityType.Type,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
+					priorityList := []priorityModel.Priority{}
+					priorityDao.GetAll().All(&priorityList)
+					return priorityList, nil
 				},
 			},
 			"tagList": &graphql.Field{
 				Type: tagType.Type,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
+					tagList := []tagModel.Tag{}
+					tagDao.GetAll().All(&tagList)
+					return tagList, nil
 				},
 			},
 			"permissionList": &graphql.Field{
@@ -651,8 +803,7 @@ func init() {
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
 					}
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
+					return priorityDao.GetByKey(bson.ObjectIdHex(idQuery)), nil
 				},
 			},
 			"tag": &graphql.Field{
@@ -667,8 +818,7 @@ func init() {
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
 					}
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
+					return tagDao.GetByKey(bson.ObjectIdHex(idQuery)), nil
 				},
 			},
 			"permission": &graphql.Field{

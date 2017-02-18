@@ -41,6 +41,12 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"description": &graphql.Field{
 			Type: graphql.String,
 		},
+		"longitude": &graphql.Field{
+			Type: graphql.String,
+		},
+		"latitude": &graphql.Field{
+			Type: graphql.String,
+		},
 		"tags": &graphql.Field{
 			Type: graphql.NewList(tagType.Type),
 			Description: "The tags of the entity.",

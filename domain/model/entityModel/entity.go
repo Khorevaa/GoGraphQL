@@ -14,4 +14,6 @@ type Entity  struct {
 	Priority string `bson:"priority" json:"priority"`
 	Category string `bson:"category" json:"category"`
 	Creator string `bson:"creator" json:"creator"`
+	Longitude string `bson:"longitude" json:"longitude"`
+	Latitude string `bson:"latitude" json:"latitude"`
 }
