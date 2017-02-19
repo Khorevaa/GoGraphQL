@@ -9,11 +9,12 @@ type Entity  struct {
 	ModifiedDate string `bson:"modifiedDate" json:"modifiedDate"`
 	Subject string `bson:"subject" json:"subject"`
 	Description string `bson:"description" json:"description"`
+	Longitude string `bson:"longitude" json:"longitude"`
+	Latitude string `bson:"latitude" json:"latitude"`
+	Closed bool `bson:"closed" json:"closed"`
 	Tags []string `bson:"tags" json:"tags"`
 	Groups []string `bson:"groups" json:"groups"`
 	Priority string `bson:"priority" json:"priority"`
 	Category string `bson:"category" json:"category"`
 	Creator string `bson:"creator" json:"creator"`
-	Longitude string `bson:"longitude" json:"longitude"`
-	Latitude string `bson:"latitude" json:"latitude"`
 }

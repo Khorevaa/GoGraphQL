@@ -47,6 +47,9 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"latitude": &graphql.Field{
 			Type: graphql.String,
 		},
+		"closed": &graphql.Field{
+			Type: graphql.Boolean,
+		},
 		"tags": &graphql.Field{
 			Type: graphql.NewList(tagType.Type),
 			Description: "The tags of the entity.",

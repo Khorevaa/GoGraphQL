@@ -27,6 +27,9 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"modifiedDate": &graphql.Field{
 			Type: graphql.String,
 		},
+		"creator": &graphql.Field{
+			Type: graphql.String,
+		},
 		"referenceClass": &graphql.Field{
 			Type: graphql.String,
 		},
