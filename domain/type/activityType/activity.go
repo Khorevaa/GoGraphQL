@@ -5,6 +5,8 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/model/entityModel"
 	"github.com/NiciiA/GoGraphQL/domain/type/contactType"
 	"github.com/NiciiA/GoGraphQL/domain/model/activityModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/contactDao"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -45,7 +47,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: contactType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if activity, ok := p.Source.(activityModel.Activity); ok {
-					return activity.Creator, nil
+					return contactDao.GetById(bson.ObjectIdHex(activity.Creator)), nil
 				}
 				return nil, nil
 			},

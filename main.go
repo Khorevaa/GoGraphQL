@@ -41,6 +41,9 @@ import (
 	"github.com/NiciiA/GoGraphQL/dataaccess/contactDao"
 	"github.com/NiciiA/GoGraphQL/domain/model/newsModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/newsDao"
+	"github.com/NiciiA/GoGraphQL/domain/model/activityModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/entityActivityDao"
+	"github.com/NiciiA/GoGraphQL/dataaccess/newsActivityDao"
 )
 
 var (
@@ -600,7 +603,7 @@ func init() {
 					category, _ := p.Args["category"].(string)
 					creator, _ := p.Args["creator"].(string)
 					entity := entityModel.Entity{}
-					entityDao.GetById(bson.ObjectIdHex(id))
+					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
 					entity.ModifiedDate = time.Now().Format(time.RFC3339)
 					entity.Subject = subject
 					entity.Description = description
@@ -626,7 +629,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
 					entity := entityModel.Entity{}
-					entityDao.GetById(bson.ObjectIdHex(id))
+					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
 					entityDao.Delete(entity)
 					return  entity, nil
 				},
@@ -645,7 +648,7 @@ func init() {
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
 					entity := entityModel.Entity{}
-					entityDao.GetById(bson.ObjectIdHex(id))
+					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
 					entity.ModifiedDate = time.Now().Format(time.RFC3339)
 					entity.Disabled = disable
 					entityDao.Update(entity)
@@ -660,9 +663,53 @@ func init() {
 			},
 			"pushEntityActivity": &graphql.Field{
 				Type: activityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"referenceId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"comment": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"intern": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Boolean),
+					},
+					"creator": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					referenceId, _ := p.Args["referenceId"].(string)
+					comment, _ := p.Args["comment"].(string)
+					intern, _ := p.Args["intern"].(bool)
+					creator, _ := p.Args["creator"].(string)
+					activity := activityModel.Activity{}
+					activity.ID = bson.NewObjectId()
+					activity.Disabled = false
+					activity.CreatedDate = time.Now().Format(time.RFC3339)
+					activity.ModifiedDate = time.Now().Format(time.RFC3339)
+					activity.ReferenceClass = "Entity"
+					activity.ReferenceId = referenceId
+					activity.Comment = comment
+					activity.Intern = intern
+					activity.Creator = creator
+					entityActivityDao.Insert(activity)
+					return  activity, nil
+				},
 			},
 			"removeEntityActivity": &graphql.Field{
 				Type: activityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					id, _ := p.Args["id"].(string)
+					activity := activityModel.Activity{}
+					entityActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
+					entityActivityDao.Delete(activity)
+					return  activity, nil
+				},
 			},
 			"createGroup": &graphql.Field{
 				Type: groupType.Type,
@@ -842,7 +889,7 @@ func init() {
 					category, _ := p.Args["category"].(string)
 					creator, _ := p.Args["creator"].(string)
 					news := newsModel.News{}
-					newsDao.GetById(bson.ObjectIdHex(id))
+					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
 					news.ModifiedDate = time.Now().Format(time.RFC3339)
 					news.Title = title
 					news.Text = text
@@ -866,7 +913,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
 					news := newsModel.News{}
-					newsDao.GetById(bson.ObjectIdHex(id))
+					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
 					newsDao.Delete(news)
 					return  news, nil
 				},
@@ -885,7 +932,7 @@ func init() {
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
 					news := newsModel.News{}
-					newsDao.GetById(bson.ObjectIdHex(id))
+					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
 					news.ModifiedDate = time.Now().Format(time.RFC3339)
 					news.Disabled = disable
 					newsDao.Update(news)
@@ -898,11 +945,55 @@ func init() {
 			"removeNewsFile": &graphql.Field{
 				Type: fileType.Type,
 			},
-			"removeNewsComment": &graphql.Field{
+			"pushNewsActivity": &graphql.Field{
 				Type: activityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"referenceId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"comment": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"intern": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Boolean),
+					},
+					"creator": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					referenceId, _ := p.Args["referenceId"].(string)
+					comment, _ := p.Args["comment"].(string)
+					intern, _ := p.Args["intern"].(bool)
+					creator, _ := p.Args["creator"].(string)
+					activity := activityModel.Activity{}
+					activity.ID = bson.NewObjectId()
+					activity.Disabled = false
+					activity.CreatedDate = time.Now().Format(time.RFC3339)
+					activity.ModifiedDate = time.Now().Format(time.RFC3339)
+					activity.ReferenceClass = "News"
+					activity.ReferenceId = referenceId
+					activity.Comment = comment
+					activity.Intern = intern
+					activity.Creator = creator
+					newsActivityDao.Insert(activity)
+					return  activity, nil
+				},
 			},
-			"pushNewsComment": &graphql.Field{
+			"removeNewsActivity": &graphql.Field{
 				Type: activityType.Type,
+				Args: graphql.FieldConfigArgument{
+					"id": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					id, _ := p.Args["id"].(string)
+					activity := activityModel.Activity{}
+					newsActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
+					newsActivityDao.Delete(activity)
+					return  activity, nil
+				},
 			},
 			"createOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
@@ -1178,7 +1269,7 @@ func init() {
 		Name: "Query",
 		Fields: graphql.Fields{
 			"categoryList": &graphql.Field{
-				Type: categoryType.Type,
+				Type: graphql.NewList(categoryType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// type == news oder entity
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
@@ -1188,7 +1279,7 @@ func init() {
 				},
 			},
 			"contactList": &graphql.Field{
-				Type: contactType.Type,
+				Type: graphql.NewList(contactType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					contactList := []contactModel.Contact{}
@@ -1216,7 +1307,7 @@ func init() {
 				},
 			},
 			"newsList": &graphql.Field{
-				Type: newsType.Type,
+				Type: graphql.NewList(newsType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					newsList := []newsModel.News{}
@@ -1225,7 +1316,7 @@ func init() {
 				},
 			},
 			"orgUnitList": &graphql.Field{
-				Type: orgUnitType.Type,
+				Type: graphql.NewList(orgUnitType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					orgUnitList := []orgUnitModel.OrgUnit{}
 					orgUnitDao.GetAll().All(&orgUnitList)
@@ -1233,7 +1324,7 @@ func init() {
 				},
 			},
 			"priorityList": &graphql.Field{
-				Type: priorityType.Type,
+				Type: graphql.NewList(priorityType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					priorityList := []priorityModel.Priority{}
 					priorityDao.GetAll().All(&priorityList)
@@ -1241,7 +1332,7 @@ func init() {
 				},
 			},
 			"tagList": &graphql.Field{
-				Type: tagType.Type,
+				Type: graphql.NewList(tagType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					tagList := []tagModel.Tag{}
 					tagDao.GetAll().All(&tagList)
@@ -1249,7 +1340,7 @@ func init() {
 				},
 			},
 			"permissionList": &graphql.Field{
-				Type: permissionType.Type,
+				Type: graphql.NewList(permissionType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
@@ -1398,6 +1489,40 @@ func init() {
 					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
 				},
 			},
+			"entityActivites": &graphql.Field{
+				Type: graphql.NewList(activityType.Type),
+				Args: graphql.FieldConfigArgument{
+					"referenceId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					referenceId, _ := p.Args["referenceId"].(string)
+					if !bson.IsObjectIdHex(referenceId) {
+						return nil, nil
+					}
+					activityList := []activityModel.Activity{}
+					entityActivityDao.GetAll(referenceId).All(&activityList)
+					return activityList, nil
+				},
+			},
+			"newsActivites": &graphql.Field{
+				Type: graphql.NewList(activityType.Type),
+				Args: graphql.FieldConfigArgument{
+					"referenceId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+				},
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					referenceId, _ := p.Args["referenceId"].(string)
+					if !bson.IsObjectIdHex(referenceId) {
+						return nil, nil
+					}
+					activityList := []activityModel.Activity{}
+					newsActivityDao.GetAll(referenceId).All(&activityList)
+					return activityList, nil
+				},
+			},
 		},
 	})
 	Schema, _ = graphql.NewSchema(graphql.SchemaConfig{
@@ -1407,10 +1532,27 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/graphql", serveGraphQL(Schema))
+	http.HandleFunc("/graphql", log(serveGraphQL(Schema)))
 	http.HandleFunc("/", graphiql.ServeGraphiQL)
 	fmt.Println("Now server is running on port 8080")
 	http.ListenAndServe(":8080", nil)
+}
+
+func log(fn http.HandlerFunc) http.HandlerFunc {
+	/*
+	return func(w http.ResponseWriter, r *http.Request) {
+    if len(r.URL.Query().Get("key") == 0) {
+      http.Error(w, "missing key", http.StatusUnauthorized)
+      return // don't call original handler
+    }
+    fn(w, r)
+  }
+	 */
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("Before")
+		fn(w, r)
+		fmt.Println("After")
+	}
 }
 
 func serveGraphQL(s graphql.Schema) http.HandlerFunc {

@@ -24,7 +24,7 @@ func Insert(news newsModel.News) {
 }
 
 func Update(news newsModel.News) {
-	GetCollection().Update(news.ID, &news)
+	GetCollection().Update(bson.M{"_id": news.ID}, &news)
 }
 
 func Delete(news newsModel.News) {

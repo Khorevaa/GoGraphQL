@@ -8,6 +8,13 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/model/newsModel"
 	"github.com/NiciiA/GoGraphQL/domain/type/contactType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
+	"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/groupDao"
+	"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/domain/model/tagModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/tagDao"
+	"github.com/NiciiA/GoGraphQL/dataaccess/categoryDao"
+	"github.com/NiciiA/GoGraphQL/dataaccess/contactDao"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -44,10 +51,30 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"tags": &graphql.Field{
 			Type: graphql.NewList(tagType.Type),
 			Description: "The tags of the news.",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if news, ok := p.Source.(newsModel.News); ok {
+					tagList := []tagModel.Tag{}
+					for _, tagId := range news.Tags {
+						tagList = append(tagList, tagDao.GetByKey(bson.ObjectIdHex(tagId)))
+					}
+					return tagList, nil
+				}
+				return nil, nil
+			},
 		},
 		"groups": &graphql.Field{
 			Type: graphql.NewList(groupType.Type),
 			Description: "The groups of the news.",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if news, ok := p.Source.(newsModel.News); ok {
+					groupList := []groupModel.Group{}
+					for _, groupId := range news.Groups {
+						groupList = append(groupList, groupDao.GetByKey(bson.ObjectIdHex(groupId)))
+					}
+					return groupList, nil
+				}
+				return nil, nil
+			},
 		},
 		"important": &graphql.Field{
 			Type: graphql.Boolean,
@@ -58,7 +85,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Description: "The category of the news.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if news, ok := p.Source.(newsModel.News); ok {
-					return news.Category, nil
+					return categoryDao.GetByKey(bson.ObjectIdHex(news.Category)), nil
 				}
 				return nil, nil
 			},
@@ -67,7 +94,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: contactType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if news, ok := p.Source.(newsModel.News); ok {
-					return news.Creator, nil
+					return contactDao.GetById(bson.ObjectIdHex(news.Creator)), nil
 				}
 				return nil, nil
 			},

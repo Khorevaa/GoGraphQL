@@ -3,6 +3,10 @@ package accountType
 import (
 	"github.com/graphql-go/graphql"
 	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/groupDao"
+	"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/domain/type/groupType"
+	"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -40,7 +44,18 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.NewList(graphql.String),
 		},
 		"groups": &graphql.Field{
-			Type: graphql.NewList(graphql.String),
+			Type: graphql.NewList(groupType.Type),
+			Description: "The groups of the news.",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if accountModel, ok := p.Source.(accountModel.Account); ok {
+					groupList := []groupModel.Group{}
+					for _, groupId := range accountModel.Groups {
+						groupList = append(groupList, groupDao.GetByKey(bson.ObjectIdHex(groupId)))
+					}
+					return groupList, nil
+				}
+				return nil, nil
+			},
 		},
 	},
 })

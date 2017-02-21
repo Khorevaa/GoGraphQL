@@ -5,6 +5,8 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/model/contactModel"
 	"github.com/NiciiA/GoGraphQL/domain/type/orgUnitType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
+	"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/dataaccess/orgUnitDao"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -45,7 +47,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: orgUnitType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if contact, ok := p.Source.(contactModel.Contact); ok {
-					return contact.OrgUnit, nil
+					return orgUnitDao.GetByKey(bson.ObjectIdHex(contact.OrgUnit)), nil
 				}
 				return nil, nil
 			},

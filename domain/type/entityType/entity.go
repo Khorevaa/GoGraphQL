@@ -11,6 +11,12 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
 	"github.com/NiciiA/GoGraphQL/dataaccess/categoryDao"
 	"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/dataaccess/groupDao"
+	"github.com/NiciiA/GoGraphQL/dataaccess/tagDao"
+	"github.com/NiciiA/GoGraphQL/domain/model/tagModel"
+	"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
+	"github.com/NiciiA/GoGraphQL/dataaccess/priorityDao"
+	"github.com/NiciiA/GoGraphQL/dataaccess/contactDao"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -53,14 +59,40 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"tags": &graphql.Field{
 			Type: graphql.NewList(tagType.Type),
 			Description: "The tags of the entity.",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if entity, ok := p.Source.(entityModel.Entity); ok {
+					tagList := []tagModel.Tag{}
+					for _, tagId := range entity.Tags {
+						tagList = append(tagList, tagDao.GetByKey(bson.ObjectIdHex(tagId)))
+					}
+					return tagList, nil
+				}
+				return nil, nil
+			},
 		},
 		"groups": &graphql.Field{
 			Type: graphql.NewList(groupType.Type),
 			Description: "The groups of the entity.",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if entity, ok := p.Source.(entityModel.Entity); ok {
+					groupList := []groupModel.Group{}
+					for _, groupId := range entity.Groups {
+						groupList = append(groupList, groupDao.GetByKey(bson.ObjectIdHex(groupId)))
+					}
+					return groupList, nil
+				}
+				return nil, nil
+			},
 		},
 		"priority": &graphql.Field{
 			Type: priorityType.Type,
 			Description: "The priority of the entity.",
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				if entity, ok := p.Source.(entityModel.Entity); ok {
+					return priorityDao.GetByKey(bson.ObjectIdHex(entity.Priority)), nil
+				}
+				return nil, nil
+			},
 		},
 		"category": &graphql.Field{
 			Type: categoryType.Type,
@@ -76,7 +108,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: contactType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if entity, ok := p.Source.(entityModel.Entity); ok {
-					return entity.Creator, nil
+					return contactDao.GetById(bson.ObjectIdHex(entity.Creator)), nil
 				}
 				return nil, nil
 			},
