@@ -24,7 +24,7 @@ func Insert(entity entityModel.Entity) {
 }
 
 func Update(entity entityModel.Entity) {
-	GetCollection().Update(entity.ID, &entity)
+	GetCollection().Update(bson.M{"_id": entity.ID}, &entity)
 }
 
 func Delete(entity entityModel.Entity) {

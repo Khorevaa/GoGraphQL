@@ -45,7 +45,7 @@ func Insert(group groupModel.Group) {
 }
 
 func Update(group groupModel.Group) {
-	GetCollection().Update(group.ID, &group)
+	GetCollection().Update(bson.M{"_id": group.ID}, &group)
 }
 
 func Delete(group groupModel.Group) {

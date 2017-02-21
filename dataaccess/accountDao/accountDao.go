@@ -24,7 +24,7 @@ func Insert(account accountModel.Account) {
 }
 
 func Update(account accountModel.Account) {
-	GetCollection().Update(account.ID, &account)
+	GetCollection().Update(bson.M{"_id": account.ID}, &account)
 }
 
 func Delete(account accountModel.Account) {

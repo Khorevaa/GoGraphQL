@@ -45,7 +45,7 @@ func Insert(priority priorityModel.Priority) {
 }
 
 func Update(priority priorityModel.Priority) {
-	GetCollection().Update(priority.ID, &priority)
+	GetCollection().Update(bson.M{"_id": priority.ID}, &priority)
 }
 
 func Delete(priority priorityModel.Priority) {

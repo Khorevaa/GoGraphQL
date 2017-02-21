@@ -24,7 +24,7 @@ func Insert(contact contactModel.Contact) {
 }
 
 func Update(contact contactModel.Contact) {
-	GetCollection().Update(contact.ID, &contact)
+	GetCollection().Update(bson.M{"_id": contact.ID}, &contact)
 }
 
 func Delete(contact contactModel.Contact) {

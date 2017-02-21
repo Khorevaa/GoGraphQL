@@ -45,7 +45,7 @@ func Insert(category categoryModel.Category) {
 }
 
 func Update(category categoryModel.Category) {
-	GetCollection().Update(category.ID, &category)
+	GetCollection().Update(bson.M{"_id": category.ID}, &category)
 }
 
 func Delete(category categoryModel.Category) {

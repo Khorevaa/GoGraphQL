@@ -24,7 +24,7 @@ func Insert(activity activityModel.Activity) {
 }
 
 func Update(activity activityModel.Activity) {
-	GetCollection().Update(activity.ID, &activity)
+	GetCollection().Update(bson.M{"_id": activity.ID}, &activity)
 }
 
 func Delete(activity activityModel.Activity) {

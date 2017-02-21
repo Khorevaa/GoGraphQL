@@ -45,7 +45,7 @@ func Insert(tag tagModel.Tag) {
 }
 
 func Update(tag tagModel.Tag) {
-	GetCollection().Update(tag.ID, &tag)
+	GetCollection().Update(bson.M{"_id": tag.ID}, &tag)
 }
 
 func Delete(tag tagModel.Tag) {

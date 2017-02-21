@@ -45,7 +45,7 @@ func Insert(orgUnit orgUnitModel.OrgUnit) {
 }
 
 func Update(orgUnit orgUnitModel.OrgUnit) {
-	GetCollection().Update(orgUnit.ID, &orgUnit)
+	GetCollection().Update(bson.M{"_id": orgUnit.ID}, &orgUnit)
 }
 
 func Delete(orgUnit orgUnitModel.OrgUnit) {
