@@ -37,3 +37,7 @@ func GetAll(query interface{}) *mgo.Query {
 func init() {
 	session = mongoAccess.Session.Clone()
 }
+
+func SearchAll(search string) *mgo.Query {
+	return GetCollection().Find(bson.M{"$text": bson.M{"$search": search}})
+}

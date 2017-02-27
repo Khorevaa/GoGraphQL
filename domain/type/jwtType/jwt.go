@@ -4,6 +4,7 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/NiciiA/GoGraphQL/domain/type/accountType"
 	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
+	"github.com/NiciiA/GoGraphQL/webapp/authHandler"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -14,7 +15,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 				if account, ok := p.Source.(accountModel.Account); ok {
-					return account.UserName, nil
+					return authHandler.CreateJWT(account), nil
 				}
 				return nil, nil
 			},

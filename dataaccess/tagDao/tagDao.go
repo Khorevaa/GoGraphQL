@@ -56,3 +56,7 @@ func Delete(tag tagModel.Tag) {
 func GetAll() *mgo.Query {
 	return GetCollection().Find(bson.M{})
 }
+
+func SearchAll(search string) *mgo.Query {
+	return GetCollection().Find(bson.M{"$text": bson.M{"$search": search}})
+}

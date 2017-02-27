@@ -130,6 +130,9 @@ func init() {
 			"createAccount": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"userName": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -150,6 +153,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					userName, _ := p.Args["userName"].(string)
 					password, _ := p.Args["password"].(string)
 					eMail, _ := p.Args["eMail"].(string)
@@ -174,6 +178,9 @@ func init() {
 			"updateAccount": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -197,6 +204,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					userName, _ := p.Args["userName"].(string)
 					password, _ := p.Args["password"].(string)
@@ -223,11 +231,15 @@ func init() {
 			"removeAccount": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
@@ -241,6 +253,9 @@ func init() {
 			"disableAccount": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -249,6 +264,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
 					if !bson.IsObjectIdHex(id) {
@@ -265,6 +281,9 @@ func init() {
 			"createCategory": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -273,6 +292,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					name, _ := p.Args["name"].(string)
 					typeCat, _ := p.Args["type"].(string)
 					category := categoryModel.Category{}
@@ -289,6 +309,9 @@ func init() {
 			"updateCategory": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -300,6 +323,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -317,11 +341,15 @@ func init() {
 			"removeCategory": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -334,6 +362,9 @@ func init() {
 			"disableCategory": &graphql.Field{
 				Type: categoryType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -342,6 +373,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -357,6 +389,9 @@ func init() {
 			"createContact": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"firstName": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -377,6 +412,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					firstName, _ := p.Args["firstName"].(string)
 					lastName, _ := p.Args["lastName"].(string)
 					street, _ := p.Args["street"].(string)
@@ -401,6 +437,9 @@ func init() {
 			"updateContact": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -424,6 +463,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					firstName, _ := p.Args["firstName"].(string)
 					lastName, _ := p.Args["lastName"].(string)
@@ -450,11 +490,15 @@ func init() {
 			"removeContact": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
@@ -468,6 +512,9 @@ func init() {
 			"disableContact": &graphql.Field{
 				Type: contactType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -476,6 +523,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
 					if !bson.IsObjectIdHex(id) {
@@ -492,6 +540,9 @@ func init() {
 			"createEntity": &graphql.Field{
 				Type: entityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"subject": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -524,6 +575,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					subject, _ := p.Args["subject"].(string)
 					description, _ := p.Args["description"].(string)
 					longitude, _ := p.Args["longitude"].(string)
@@ -556,6 +608,9 @@ func init() {
 			"updateEntity": &graphql.Field{
 				Type: entityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -591,6 +646,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					subject, _ := p.Args["subject"].(string)
 					description, _ := p.Args["description"].(string)
@@ -622,11 +678,15 @@ func init() {
 			"removeEntity": &graphql.Field{
 				Type: entityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					entity := entityModel.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
@@ -637,6 +697,9 @@ func init() {
 			"disableEntity": &graphql.Field{
 				Type: entityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -645,6 +708,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
 					entity := entityModel.Entity{}
@@ -664,6 +728,9 @@ func init() {
 			"pushEntityActivity": &graphql.Field{
 				Type: activityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"referenceId": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -678,6 +745,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					referenceId, _ := p.Args["referenceId"].(string)
 					comment, _ := p.Args["comment"].(string)
 					intern, _ := p.Args["intern"].(bool)
@@ -699,11 +767,15 @@ func init() {
 			"removeEntityActivity": &graphql.Field{
 				Type: activityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					activity := activityModel.Activity{}
 					entityActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
@@ -714,11 +786,15 @@ func init() {
 			"createGroup": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					name, _ := p.Args["name"].(string)
 					group := groupModel.Group{}
 					group.ID = bson.NewObjectId()
@@ -733,6 +809,9 @@ func init() {
 			"updateGroup": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -741,6 +820,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -756,11 +836,15 @@ func init() {
 			"removeGroup": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -773,6 +857,9 @@ func init() {
 			"disableGroup": &graphql.Field{
 				Type: groupType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -781,6 +868,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -796,6 +884,9 @@ func init() {
 			"createNews": &graphql.Field{
 				Type: newsType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"title": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -822,6 +913,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					title, _ := p.Args["title"].(string)
 					text, _ := p.Args["text"].(string)
 					intern, _ := p.Args["intern"].(bool)
@@ -850,6 +942,9 @@ func init() {
 			"updateNews": &graphql.Field{
 				Type: newsType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -879,6 +974,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					title, _ := p.Args["title"].(string)
 					text, _ := p.Args["text"].(string)
@@ -906,11 +1002,15 @@ func init() {
 			"removeNews": &graphql.Field{
 				Type: newsType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					news := newsModel.News{}
 					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
@@ -921,6 +1021,9 @@ func init() {
 			"disableNews": &graphql.Field{
 				Type: newsType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -929,6 +1032,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
 					news := newsModel.News{}
@@ -948,6 +1052,9 @@ func init() {
 			"pushNewsActivity": &graphql.Field{
 				Type: activityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"referenceId": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -962,6 +1069,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					referenceId, _ := p.Args["referenceId"].(string)
 					comment, _ := p.Args["comment"].(string)
 					intern, _ := p.Args["intern"].(bool)
@@ -983,11 +1091,15 @@ func init() {
 			"removeNewsActivity": &graphql.Field{
 				Type: activityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					id, _ := p.Args["id"].(string)
 					activity := activityModel.Activity{}
 					newsActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
@@ -998,11 +1110,15 @@ func init() {
 			"createOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					name, _ := p.Args["name"].(string)
 					orgUnit := orgUnitModel.OrgUnit{}
 					orgUnit.ID = bson.NewObjectId()
@@ -1017,6 +1133,9 @@ func init() {
 			"updateOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -1025,6 +1144,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1040,11 +1160,15 @@ func init() {
 			"removeOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1057,6 +1181,9 @@ func init() {
 			"disableOrgUnit": &graphql.Field{
 				Type: orgUnitType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -1065,6 +1192,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1080,11 +1208,15 @@ func init() {
 			"createPriority": &graphql.Field{
 				Type: priorityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					name, _ := p.Args["name"].(string)
 					priority := priorityModel.Priority{}
 					priority.ID = bson.NewObjectId()
@@ -1099,6 +1231,9 @@ func init() {
 			"updatePriority": &graphql.Field{
 				Type: priorityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -1107,6 +1242,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1122,11 +1258,15 @@ func init() {
 			"removePriority": &graphql.Field{
 				Type: priorityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1139,6 +1279,9 @@ func init() {
 			"disablePriority": &graphql.Field{
 				Type: priorityType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -1147,6 +1290,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1174,6 +1318,9 @@ func init() {
 			"createTag": &graphql.Field{
 				Type: tagType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"name": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -1182,6 +1329,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					name, _ := p.Args["name"].(string)
 					style, _ := p.Args["style"].(string)
 					tag := tagModel.Tag{}
@@ -1198,6 +1346,9 @@ func init() {
 			"updateTag": &graphql.Field{
 				Type: tagType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -1209,6 +1360,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1226,11 +1378,15 @@ func init() {
 			"removeTag": &graphql.Field{
 				Type: tagType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1243,6 +1399,9 @@ func init() {
 			"disableTag": &graphql.Field{
 				Type: tagType.Type,
 				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
@@ -1251,6 +1410,7 @@ func init() {
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					
 					idQuery, _ := p.Args["id"].(string)
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
@@ -1270,28 +1430,79 @@ func init() {
 		Fields: graphql.Fields{
 			"categoryList": &graphql.Field{
 				Type: graphql.NewList(categoryType.Type),
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"search": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					search, _ := p.Args["search"].(string)
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
 					// type == news oder entity
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					categoryList := []categoryModel.Category{}
-					categoryDao.GetAll().All(&categoryList)
+					categoryDao.SearchAll(search).Skip(offset).Limit(limit).All(&categoryList)
 					return categoryList, nil
 				},
 			},
 			"contactList": &graphql.Field{
 				Type: graphql.NewList(contactType.Type),
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"search": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					search, _ := p.Args["search"].(string)
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					contactList := []contactModel.Contact{}
-					contactDao.GetAll(bson.M{}).All(&contactList)
+					contactDao.SearchAll(search).Skip(offset).Limit(limit).All(&contactList)
 					return contactList, nil
 				},
 			},
 			"entityList": &graphql.Field{
 				Type: graphql.NewList(entityType.Type),
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"search": &graphql.ArgumentConfig{
+						Type: graphql.String,
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					search, _ := p.Args["search"].(string)
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
 					entityList := []entityModel.Entity{}
-					entityDao.GetAll(bson.M{}).All(&entityList)
+					entityDao.SearchAll(search).Skip(offset).Limit(limit).All(&entityList)
 					return entityList, nil
 					// curl -g 'http://localhost:8080/graphql?query={entityList{id}}'
 					// return entityModel.Entity{CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
@@ -1299,51 +1510,125 @@ func init() {
 			},
 			"groupList": &graphql.Field{
 				Type: graphql.NewList(groupType.Type),
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"search": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					search, _ := p.Args["search"].(string)
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					groupList := []groupModel.Group{}
-					groupDao.GetAll().All(&groupList)
+					groupDao.SearchAll(search).Skip(offset).Limit(limit).All(&groupList)
 					return groupList, nil
 				},
 			},
 			"newsList": &graphql.Field{
 				Type: graphql.NewList(newsType.Type),
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
 					newsList := []newsModel.News{}
-					newsDao.GetAll(bson.M{}).All(&newsList)
+					newsDao.GetAll(bson.M{}).Skip(offset).Limit(limit).All(&newsList)
 					return newsList, nil
 				},
 			},
 			"orgUnitList": &graphql.Field{
 				Type: graphql.NewList(orgUnitType.Type),
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"search": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					search, _ := p.Args["search"].(string)
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
 					orgUnitList := []orgUnitModel.OrgUnit{}
-					orgUnitDao.GetAll().All(&orgUnitList)
+					orgUnitDao.SearchAll(search).Skip(offset).Limit(limit).All(&orgUnitList)
 					return orgUnitList, nil
 				},
 			},
 			"priorityList": &graphql.Field{
 				Type: graphql.NewList(priorityType.Type),
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"search": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					search, _ := p.Args["search"].(string)
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
 					priorityList := []priorityModel.Priority{}
-					priorityDao.GetAll().All(&priorityList)
+					priorityDao.SearchAll(search).Skip(offset).Limit(limit).All(&priorityList)
 					return priorityList, nil
 				},
 			},
 			"tagList": &graphql.Field{
 				Type: graphql.NewList(tagType.Type),
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					tagList := []tagModel.Tag{}
-					tagDao.GetAll().All(&tagList)
-					return tagList, nil
+				Args: graphql.FieldConfigArgument{
+					"jwt": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"search": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
+					"offset": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
+					"limit": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.Int),
+					},
 				},
-			},
-			"permissionList": &graphql.Field{
-				Type: graphql.NewList(permissionType.Type),
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return groupModel.Group{ID: bson.ObjectIdHex("x")}, nil
+					search, _ := p.Args["search"].(string)
+					offset, _ := p.Args["offset"].(int)
+					limit, _ := p.Args["limit"].(int)
+					tagList := []tagModel.Tag{}
+					tagDao.SearchAll(search).Skip(offset).Limit(limit).All(&tagList)
+					return tagList, nil
 				},
 			},
 			"category": &graphql.Field{
@@ -1471,22 +1756,6 @@ func init() {
 						return nil, nil
 					}
 					return tagDao.GetByKey(bson.ObjectIdHex(idQuery)), nil
-				},
-			},
-			"permission": &graphql.Field{
-				Type: permissionType.Type,
-				Args: graphql.FieldConfigArgument{
-					"id": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.String),
-					},
-				},
-				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					idQuery, _ := p.Args["id"].(string)
-					if !bson.IsObjectIdHex(idQuery) {
-						return nil, nil
-					}
-					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					return entityModel.Entity{ID: bson.ObjectIdHex(idQuery), CreatedDate: "fgdfgdfgfdg", Disabled: false, Groups: []string{"customer", "internal"}}, nil
 				},
 			},
 			"entityActivites": &graphql.Field{
