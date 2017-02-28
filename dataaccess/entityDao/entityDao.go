@@ -39,5 +39,7 @@ func init() {
 }
 
 func SearchAll(search string) *mgo.Query {
-	return GetCollection().Find(bson.M{"$text": bson.M{"$search": search}})
+	c := GetCollection()
+	c.EnsureIndexKey("_id", "subject", "description")
+	return c.Find(bson.M{"$text": bson.M{"$search": search}})
 }
