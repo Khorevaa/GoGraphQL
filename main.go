@@ -1614,6 +1614,8 @@ func RestAuth() http.HandlerFunc {
 			jwt.JWT = authHandler.CreateJWT(account)
 			jwt.Account = account
 			json.NewEncoder(w).Encode(&jwt)
+			cookie := http.Cookie{HttpOnly:true, Name:"jwt",Value:jwt.JWT,MaxAge:0}
+			http.SetCookie(w, &cookie)
 		}
 	}
 }
@@ -1630,7 +1632,12 @@ func RestRegister() http.HandlerFunc {
 			defer r.Body.Close()
 			account.ID = bson.NewObjectId()
 			accountDao.Insert(account)
-			json.NewEncoder(w).Encode(&account)
+			jwt := jwtModel.JWT{}
+			jwt.JWT = authHandler.CreateJWT(account)
+			jwt.Account = account
+			json.NewEncoder(w).Encode(&jwt)
+			cookie := http.Cookie{HttpOnly:true, Name:"jwt",Value:jwt.JWT,MaxAge:0}
+			http.SetCookie(w, &cookie)
 		}
 	}
 }
