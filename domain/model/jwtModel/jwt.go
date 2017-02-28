@@ -1,6 +1,8 @@
 package jwtModel
 
-type News  struct {
+import "github.com/NiciiA/GoGraphQL/domain/model/accountModel"
+
+type JWT struct {
 	JWT string `bson:"jwt" json:"jwt"`
-	Account string `bson:"account" json:"account"`
+	Account accountModel.Account `bson:"account" json:"account"`
 }

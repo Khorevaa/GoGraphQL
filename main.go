@@ -44,6 +44,8 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/model/activityModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/entityActivityDao"
 	"github.com/NiciiA/GoGraphQL/dataaccess/newsActivityDao"
+	"github.com/NiciiA/GoGraphQL/domain/model/jwtModel"
+	"github.com/NiciiA/GoGraphQL/webapp/authHandler"
 )
 
 var (
@@ -1590,9 +1592,47 @@ func init() {
 
 func main() {
 	http.HandleFunc("/graphql", log(serveGraphQL(Schema)))
-	http.HandleFunc("/", graphiql.ServeGraphiQL)
+	http.HandleFunc("/graphiql", graphiql.ServeGraphiQL)
+	http.HandleFunc("/auth", RestAuth())
+	http.HandleFunc("/register", RestRegister())
 	fmt.Println("Now server is running on port 8080")
 	http.ListenAndServe(":8080", nil)
+}
+
+func RestAuth() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			decoder := json.NewDecoder(r.Body)
+			var account accountModel.Account
+			err := decoder.Decode(&account)
+			if err != nil {
+				panic(err)
+			}
+			defer r.Body.Close()
+			accountDao.GetAll(account).One(&account)
+			jwt := jwtModel.JWT{}
+			jwt.JWT = authHandler.CreateJWT(account)
+			jwt.Account = account
+			json.NewEncoder(w).Encode(&jwt)
+		}
+	}
+}
+
+func RestRegister() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			decoder := json.NewDecoder(r.Body)
+			var account accountModel.Account
+			err := decoder.Decode(&account)
+			if err != nil {
+				panic(err)
+			}
+			defer r.Body.Close()
+			account.ID = bson.NewObjectId()
+			accountDao.Insert(account)
+			json.NewEncoder(w).Encode(&account)
+		}
+	}
 }
 
 func log(fn http.HandlerFunc) http.HandlerFunc {

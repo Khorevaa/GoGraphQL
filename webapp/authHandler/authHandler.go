@@ -4,6 +4,7 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
 	"github.com/dgrijalva/jwt-go"
 	"time"
+	"fmt"
 )
 
 func CreateJWT(account accountModel.Account) string {
@@ -15,6 +16,6 @@ func CreateJWT(account accountModel.Account) string {
 		"nbf": time.Now().Unix(),
 		"exp": time.Now().AddDate(4, 0, 0).Unix(),
 	})
-	tokenString, _ := token.SignedString("slkcu4HJAgd78ADizcuidaAsd31297X")
+	tokenString, _ := token.SignedString([]byte("secretKeyM8"))
 	return tokenString
 }
