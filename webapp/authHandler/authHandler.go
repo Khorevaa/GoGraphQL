@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+var CurrentAccount accountModel.Account
+
 func CreateJWT(account accountModel.Account) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"accountId": account.ID,

@@ -1665,6 +1665,11 @@ func log(fn http.HandlerFunc) http.HandlerFunc {
 
 			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				fmt.Println("Before", claims["accountId"])
+				account := accountModel.Account{}
+				account.ID = bson.ObjectIdHex(claims["accountId"].(string))
+				account.Groups = claims["groups"].(string)
+				account.Roles = claims["roles"].(string)
+				authHandler.CurrentAccount = account
 				fn(w, r)
 			} else {
 				fmt.Println("After")
