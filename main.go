@@ -46,6 +46,7 @@ import (
 	"github.com/NiciiA/GoGraphQL/dataaccess/newsActivityDao"
 	"github.com/NiciiA/GoGraphQL/domain/model/jwtModel"
 	"github.com/NiciiA/GoGraphQL/webapp/authHandler"
+	"github.com/dgrijalva/jwt-go"
 )
 
 var (
@@ -1632,12 +1633,12 @@ func RestRegister() http.HandlerFunc {
 			defer r.Body.Close()
 			account.ID = bson.NewObjectId()
 			accountDao.Insert(account)
+			account.Roles = []string{"customer"}
+			account.Groups = []string{"customer"}
 			jwt := jwtModel.JWT{}
 			jwt.JWT = authHandler.CreateJWT(account)
 			jwt.Account = account
 			json.NewEncoder(w).Encode(&jwt)
-			cookie := http.Cookie{HttpOnly:true, Name:"jwt",Value:jwt.JWT,MaxAge:0}
-			http.SetCookie(w, &cookie)
 		}
 	}
 }
@@ -1653,9 +1654,25 @@ func log(fn http.HandlerFunc) http.HandlerFunc {
   }
 	 */
 	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Before")
-		fn(w, r)
-		fmt.Println("After")
+		tokenString := r.Header.Get("Authorization")
+		if tokenString != "" {
+			token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+				}
+				return []byte("secretKeyM8"), nil
+			})
+
+			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+				fmt.Println("Before", claims["accountId"])
+				fn(w, r)
+			} else {
+				fmt.Println("After")
+				http.Error(w, "missing key", http.StatusUnauthorized)
+			}
+		} else {
+			http.Error(w, "missing key", http.StatusUnauthorized)
+		}
 	}
 }
 

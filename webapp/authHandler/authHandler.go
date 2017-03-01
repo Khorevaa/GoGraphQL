@@ -4,7 +4,6 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
 	"github.com/dgrijalva/jwt-go"
 	"time"
-	"fmt"
 )
 
 func CreateJWT(account accountModel.Account) string {
