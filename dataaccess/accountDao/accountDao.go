@@ -4,7 +4,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"github.com/NiciiA/GoGraphQL/dataaccess/mongoAccess"
 	"gopkg.in/mgo.v2/bson"
-	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var collectionName = "account"
@@ -19,15 +19,15 @@ func GetById(id bson.ObjectId) *mgo.Query {
 	return GetCollection().FindId(id)
 }
 
-func Insert(account accountModel.Account) {
+func Insert(account model.Account) {
 	GetCollection().Insert(&account)
 }
 
-func Update(account accountModel.Account) {
+func Update(account model.Account) {
 	GetCollection().Update(bson.M{"_id": account.ID}, &account)
 }
 
-func Delete(account accountModel.Account) {
+func Delete(account model.Account) {
 	GetCollection().Remove(account.ID)
 }
 

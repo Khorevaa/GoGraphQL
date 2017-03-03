@@ -6,17 +6,15 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/type/tagType"
 	"github.com/NiciiA/GoGraphQL/domain/type/priorityType"
 	"github.com/NiciiA/GoGraphQL/domain/type/categoryType"
-	"github.com/NiciiA/GoGraphQL/domain/model/entityModel"
 	"github.com/NiciiA/GoGraphQL/domain/type/contactType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
 	"github.com/NiciiA/GoGraphQL/dataaccess/categoryDao"
 	"gopkg.in/mgo.v2/bson"
 	"github.com/NiciiA/GoGraphQL/dataaccess/groupDao"
 	"github.com/NiciiA/GoGraphQL/dataaccess/tagDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/tagModel"
-	"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/priorityDao"
 	"github.com/NiciiA/GoGraphQL/dataaccess/contactDao"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -26,7 +24,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
+				if entity, ok := p.Source.(model.Entity); ok {
 					return entity.ID.Hex(), nil
 				}
 				return nil, nil
@@ -60,8 +58,8 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.NewList(tagType.Type),
 			Description: "The tags of the entity.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
-					tagList := []tagModel.Tag{}
+				if entity, ok := p.Source.(model.Entity); ok {
+					tagList := []model.Tag{}
 					for _, tagId := range entity.Tags {
 						tagList = append(tagList, tagDao.GetByKey(bson.ObjectIdHex(tagId)))
 					}
@@ -74,8 +72,8 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: graphql.NewList(groupType.Type),
 			Description: "The groups of the entity.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
-					groupList := []groupModel.Group{}
+				if entity, ok := p.Source.(model.Entity); ok {
+					groupList := []model.Group{}
 					for _, groupId := range entity.Groups {
 						groupList = append(groupList, groupDao.GetByKey(bson.ObjectIdHex(groupId)))
 					}
@@ -88,7 +86,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: priorityType.Type,
 			Description: "The priority of the entity.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
+				if entity, ok := p.Source.(model.Entity); ok {
 					return priorityDao.GetByKey(bson.ObjectIdHex(entity.Priority)), nil
 				}
 				return nil, nil
@@ -98,7 +96,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 			Type: categoryType.Type,
 			Description: "The category of the entity.",
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
+				if entity, ok := p.Source.(model.Entity); ok {
 					return categoryDao.GetByKey(bson.ObjectIdHex(entity.Category)), nil
 				}
 				return nil, nil
@@ -107,7 +105,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"creator": &graphql.Field{
 			Type: contactType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
+				if entity, ok := p.Source.(model.Entity); ok {
 					return contactDao.GetById(bson.ObjectIdHex(entity.Creator)), nil
 				}
 				return nil, nil
@@ -116,7 +114,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"files": &graphql.Field{
 			Type: fileType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
+				if entity, ok := p.Source.(model.Entity); ok {
 					return entity.ID.Hex(), nil
 				}
 				return nil, nil

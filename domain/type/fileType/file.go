@@ -2,7 +2,7 @@ package fileType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/fileModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -12,7 +12,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if file, ok := p.Source.(fileModel.File); ok {
+				if file, ok := p.Source.(model.File); ok {
 					return file.ID.Hex(), nil
 				}
 				return nil, nil

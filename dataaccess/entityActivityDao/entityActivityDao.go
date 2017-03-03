@@ -3,8 +3,8 @@ package entityActivityDao
 import (
 	"gopkg.in/mgo.v2"
 	"github.com/NiciiA/GoGraphQL/dataaccess/mongoAccess"
-	"github.com/NiciiA/GoGraphQL/domain/model/activityModel"
 	"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var collectionName = "entityActivity"
@@ -19,15 +19,15 @@ func GetById(id bson.ObjectId) *mgo.Query {
 	return GetCollection().FindId(id)
 }
 
-func Insert(activity activityModel.Activity) {
+func Insert(activity model.Activity) {
 	GetCollection().Insert(&activity)
 }
 
-func Update(activity activityModel.Activity) {
+func Update(activity model.Activity) {
 	GetCollection().Update(bson.M{"_id": activity.ID}, &activity)
 }
 
-func Delete(activity activityModel.Activity) {
+func Delete(activity model.Activity) {
 	GetCollection().Remove(activity.ID)
 }
 

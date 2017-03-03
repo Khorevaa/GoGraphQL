@@ -2,7 +2,7 @@ package groupType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -12,7 +12,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if group, ok := p.Source.(groupModel.Group); ok {
+				if group, ok := p.Source.(model.Group); ok {
 					return group.ID.Hex(), nil
 				}
 				return nil, nil

@@ -1,54 +1,54 @@
 package groupDao
 
 import (
-"github.com/NiciiA/GoGraphQL/dataaccess/mongoAccess"
-"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
-"gopkg.in/mgo.v2"
-"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/dataaccess/mongoAccess"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var collectionName = "group"
 
 var session *mgo.Session
 
-var GroupList map[bson.ObjectId]groupModel.Group = make(map[bson.ObjectId]groupModel.Group)
+var GroupList map[bson.ObjectId]model.Group = make(map[bson.ObjectId]model.Group)
 
 func GetCollection() *mgo.Collection {
 	return mongoAccess.GetCollection(session, collectionName)
 }
 
-func GetByKey(key bson.ObjectId) groupModel.Group {
+func GetByKey(key bson.ObjectId) model.Group {
 	return GroupList[key]
 }
 
-func AddGroup(c groupModel.Group) {
+func AddGroup(c model.Group) {
 	GroupList[c.ID] = c
 	Insert(c)
 }
 
-func UpdateGroup(c groupModel.Group) {
+func UpdateGroup(c model.Group) {
 	GroupList[c.ID] = c
 	Update(c)
 }
 
 func init() {
 	session = mongoAccess.Session.Clone()
-	var groupList []groupModel.Group
+	var groupList []model.Group
 	GetAll().All(&groupList)
 	for _, grp := range groupList {
 		AddGroup(grp)
 	}
 }
 
-func Insert(group groupModel.Group) {
+func Insert(group model.Group) {
 	GetCollection().Insert(&group)
 }
 
-func Update(group groupModel.Group) {
+func Update(group model.Group) {
 	GetCollection().Update(bson.M{"_id": group.ID}, &group)
 }
 
-func Delete(group groupModel.Group) {
+func Delete(group model.Group) {
 	delete(GroupList, group.ID)
 	GetCollection().Remove(group.ID)
 }

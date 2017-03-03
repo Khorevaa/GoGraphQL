@@ -2,11 +2,11 @@ package contactType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/contactModel"
 	"github.com/NiciiA/GoGraphQL/domain/type/orgUnitType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
 	"gopkg.in/mgo.v2/bson"
 	"github.com/NiciiA/GoGraphQL/dataaccess/orgUnitDao"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -16,7 +16,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if contact, ok := p.Source.(contactModel.Contact); ok {
+				if contact, ok := p.Source.(model.Contact); ok {
 					return contact.ID.Hex(), nil
 				}
 				return nil, nil
@@ -46,7 +46,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"orgUnit": &graphql.Field{
 			Type: orgUnitType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if contact, ok := p.Source.(contactModel.Contact); ok {
+				if contact, ok := p.Source.(model.Contact); ok {
 					return orgUnitDao.GetByKey(bson.ObjectIdHex(contact.OrgUnit)), nil
 				}
 				return nil, nil
@@ -58,7 +58,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"profileImage": &graphql.Field{
 			Type: fileType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if contact, ok := p.Source.(contactModel.Contact); ok {
+				if contact, ok := p.Source.(model.Contact); ok {
 					return contact.ID.Hex(), nil
 				}
 				return nil, nil

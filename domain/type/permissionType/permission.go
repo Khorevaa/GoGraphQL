@@ -2,7 +2,7 @@ package permissionType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/permissionModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -12,7 +12,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if permission, ok := p.Source.(permissionModel.Permissions); ok {
+				if permission, ok := p.Source.(model.Permissions); ok {
 					return permission.ID.Hex(), nil
 				}
 				return nil, nil

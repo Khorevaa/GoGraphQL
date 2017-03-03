@@ -9,10 +9,9 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/mnmtanish/go-graphiql"
 	"github.com/NiciiA/GoGraphQL/domain/type/entityType"
-	"github.com/NiciiA/GoGraphQL/domain/model/entityModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 	"gopkg.in/mgo.v2/bson"
 	"github.com/NiciiA/GoGraphQL/domain/type/groupType"
-	"github.com/NiciiA/GoGraphQL/domain/model/groupModel"
 	"github.com/NiciiA/GoGraphQL/domain/type/priorityType"
 	"github.com/NiciiA/GoGraphQL/domain/type/categoryType"
 	"github.com/NiciiA/GoGraphQL/domain/type/tagType"
@@ -23,30 +22,20 @@ import (
 	"github.com/NiciiA/GoGraphQL/domain/type/activityType"
 	"github.com/NiciiA/GoGraphQL/domain/type/fileType"
 	"github.com/NiciiA/GoGraphQL/domain/type/jwtType"
-	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/categoryDao"
 	"strconv"
 	"github.com/NiciiA/GoGraphQL/dataaccess/accountDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/categoryModel"
 	"time"
 	"github.com/NiciiA/GoGraphQL/dataaccess/groupDao"
 	"github.com/NiciiA/GoGraphQL/domain/type/permissionType"
-	"github.com/NiciiA/GoGraphQL/domain/model/orgUnitModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/orgUnitDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/priorityModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/priorityDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/tagModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/tagDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/contactModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/contactDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/newsModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/newsDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/activityModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/entityActivityDao"
 	"github.com/NiciiA/GoGraphQL/dataaccess/newsActivityDao"
-	"github.com/NiciiA/GoGraphQL/domain/model/jwtModel"
 	"github.com/NiciiA/GoGraphQL/webapp/authHandler"
-	"github.com/dgrijalva/jwt-go"
 )
 
 var (
@@ -83,7 +72,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					auth, _ := p.Args["auth"].(string)
 					password, _ := p.Args["password"].(string)
-					var account = accountModel.Account{}
+					var account = model.Account{}
 					account.Password = password
 					if validateEmail(auth) {
 						account.EMail = auth
@@ -113,7 +102,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					auth, _ := p.Args["auth"].(string)
 					password, _ := p.Args["password"].(string)
-					var account accountModel.Account = accountModel.Account{}
+					var account model.Account = model.Account{}
 					account.ID = bson.NewObjectId()
 					account.Password = password
 					if validateEmail(auth) {
@@ -159,7 +148,7 @@ func init() {
 					phone, _ := p.Args["phone"].(string)
 					roles, _ := p.Args["roles"].([]string)
 					groups, _ := p.Args["groups"].([]string)
-					account := accountModel.Account{}
+					account := model.Account{}
 					account.ID = bson.NewObjectId()
 					account.Disabled = false
 					account.CreatedDate = time.Now().Format(time.RFC3339)
@@ -210,7 +199,7 @@ func init() {
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
 					}
-					account := accountModel.Account{}
+					account := model.Account{}
 					accountDao.GetById(bson.ObjectIdHex(id)).One(&account)
 					account.ModifiedDate = time.Now().Format(time.RFC3339)
 					account.UserName = userName
@@ -235,7 +224,7 @@ func init() {
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
 					}
-					account := accountModel.Account{}
+					account := model.Account{}
 					accountDao.GetById(bson.ObjectIdHex(id)).One(&account)
 					accountDao.Delete(account)
 					return  account, nil
@@ -257,7 +246,7 @@ func init() {
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
 					}
-					account := accountModel.Account{}
+					account := model.Account{}
 					accountDao.GetById(bson.ObjectIdHex(id)).One(&account)
 					account.ModifiedDate = time.Now().Format(time.RFC3339)
 					account.Disabled = disable
@@ -278,7 +267,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
 					typeCat, _ := p.Args["type"].(string)
-					category := categoryModel.Category{}
+					category := model.Category{}
 					category.ID = bson.NewObjectId()
 					category.Disabled = false
 					category.CreatedDate = time.Now().Format(time.RFC3339)
@@ -386,7 +375,7 @@ func init() {
 					village, _ := p.Args["village"].(string)
 					orgUnit, _ := p.Args["orgUnit"].(string)
 					accounts, _ := p.Args["accounts"].([]string)
-					contact := contactModel.Contact{}
+					contact := model.Contact{}
 					contact.ID = bson.NewObjectId()
 					contact.Disabled = false
 					contact.CreatedDate = time.Now().Format(time.RFC3339)
@@ -437,7 +426,7 @@ func init() {
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
 					}
-					contact := contactModel.Contact{}
+					contact := model.Contact{}
 					contactDao.GetById(bson.ObjectIdHex(id)).One(&contact)
 					contact.ModifiedDate = time.Now().Format(time.RFC3339)
 					contact.FirstName = firstName
@@ -462,7 +451,7 @@ func init() {
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
 					}
-					contact := contactModel.Contact{}
+					contact := model.Contact{}
 					contactDao.GetById(bson.ObjectIdHex(id)).One(&contact)
 					contactDao.Delete(contact)
 					return  contact, nil
@@ -484,7 +473,7 @@ func init() {
 					if !bson.IsObjectIdHex(id) {
 						return nil, nil
 					}
-					contact := contactModel.Contact{}
+					contact := model.Contact{}
 					contactDao.GetById(bson.ObjectIdHex(id)).One(&contact)
 					contact.ModifiedDate = time.Now().Format(time.RFC3339)
 					contact.Disabled = disable
@@ -537,7 +526,7 @@ func init() {
 					priority, _ := p.Args["priority"].(string)
 					category, _ := p.Args["category"].(string)
 					creator, _ := p.Args["creator"].(string)
-					entity := entityModel.Entity{}
+					entity := model.Entity{}
 					entity.ID = bson.NewObjectId()
 					entity.Disabled = false
 					entity.CreatedDate = time.Now().Format(time.RFC3339)
@@ -605,7 +594,7 @@ func init() {
 					priority, _ := p.Args["priority"].(string)
 					category, _ := p.Args["category"].(string)
 					creator, _ := p.Args["creator"].(string)
-					entity := entityModel.Entity{}
+					entity := model.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
 					entity.ModifiedDate = time.Now().Format(time.RFC3339)
 					entity.Subject = subject
@@ -631,7 +620,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
-					entity := entityModel.Entity{}
+					entity := model.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
 					entityDao.Delete(entity)
 					return  entity, nil
@@ -650,7 +639,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
-					entity := entityModel.Entity{}
+					entity := model.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
 					entity.ModifiedDate = time.Now().Format(time.RFC3339)
 					entity.Disabled = disable
@@ -685,7 +674,7 @@ func init() {
 					comment, _ := p.Args["comment"].(string)
 					intern, _ := p.Args["intern"].(bool)
 					creator, _ := p.Args["creator"].(string)
-					activity := activityModel.Activity{}
+					activity := model.Activity{}
 					activity.ID = bson.NewObjectId()
 					activity.Disabled = false
 					activity.CreatedDate = time.Now().Format(time.RFC3339)
@@ -708,7 +697,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
-					activity := activityModel.Activity{}
+					activity := model.Activity{}
 					entityActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
 					entityActivityDao.Delete(activity)
 					return  activity, nil
@@ -723,7 +712,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
-					group := groupModel.Group{}
+					group := model.Group{}
 					group.ID = bson.NewObjectId()
 					group.Disabled = false
 					group.CreatedDate = time.Now().Format(time.RFC3339)
@@ -833,7 +822,7 @@ func init() {
 					important, _ := p.Args["important"].(bool)
 					category, _ := p.Args["category"].(string)
 					creator, _ := p.Args["creator"].(string)
-					news := newsModel.News{}
+					news := model.News{}
 					news.ID = bson.NewObjectId()
 					news.Disabled = false
 					news.CreatedDate = time.Now().Format(time.RFC3339)
@@ -891,7 +880,7 @@ func init() {
 					important, _ := p.Args["important"].(bool)
 					category, _ := p.Args["category"].(string)
 					creator, _ := p.Args["creator"].(string)
-					news := newsModel.News{}
+					news := model.News{}
 					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
 					news.ModifiedDate = time.Now().Format(time.RFC3339)
 					news.Title = title
@@ -915,7 +904,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
-					news := newsModel.News{}
+					news := model.News{}
 					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
 					newsDao.Delete(news)
 					return  news, nil
@@ -934,7 +923,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
 					disable, _ := p.Args["disable"].(bool)
-					news := newsModel.News{}
+					news := model.News{}
 					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
 					news.ModifiedDate = time.Now().Format(time.RFC3339)
 					news.Disabled = disable
@@ -969,7 +958,7 @@ func init() {
 					comment, _ := p.Args["comment"].(string)
 					intern, _ := p.Args["intern"].(bool)
 					creator, _ := p.Args["creator"].(string)
-					activity := activityModel.Activity{}
+					activity := model.Activity{}
 					activity.ID = bson.NewObjectId()
 					activity.Disabled = false
 					activity.CreatedDate = time.Now().Format(time.RFC3339)
@@ -992,7 +981,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
-					activity := activityModel.Activity{}
+					activity := model.Activity{}
 					newsActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
 					newsActivityDao.Delete(activity)
 					return  activity, nil
@@ -1007,7 +996,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
-					orgUnit := orgUnitModel.OrgUnit{}
+					orgUnit := model.OrgUnit{}
 					orgUnit.ID = bson.NewObjectId()
 					orgUnit.Disabled = false
 					orgUnit.CreatedDate = time.Now().Format(time.RFC3339)
@@ -1089,7 +1078,7 @@ func init() {
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
-					priority := priorityModel.Priority{}
+					priority := model.Priority{}
 					priority.ID = bson.NewObjectId()
 					priority.Disabled = false
 					priority.CreatedDate = time.Now().Format(time.RFC3339)
@@ -1187,7 +1176,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					name, _ := p.Args["name"].(string)
 					style, _ := p.Args["style"].(string)
-					tag := tagModel.Tag{}
+					tag := model.Tag{}
 					tag.ID = bson.NewObjectId()
 					tag.Disabled = false
 					tag.CreatedDate = time.Now().Format(time.RFC3339)
@@ -1286,7 +1275,7 @@ func init() {
 					limit, _ := p.Args["limit"].(int)
 					// type == news oder entity
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					categoryList := []categoryModel.Category{}
+					categoryList := []model.Category{}
 					categoryDao.GetAll().Skip(offset).Limit(limit).All(&categoryList)
 					return categoryList, nil
 				},
@@ -1305,7 +1294,7 @@ func init() {
 					offset, _ := p.Args["offset"].(int)
 					limit, _ := p.Args["limit"].(int)
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					contactList := []contactModel.Contact{}
+					contactList := []model.Contact{}
 					contactDao.GetAll(bson.M{}).Skip(offset).Limit(limit).All(&contactList)
 					return contactList, nil
 				},
@@ -1323,7 +1312,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					offset, _ := p.Args["offset"].(int)
 					limit, _ := p.Args["limit"].(int)
-					entityList := []entityModel.Entity{}
+					entityList := []model.Entity{}
 					entityDao.GetAll(bson.M{}).Skip(offset).Limit(limit).All(&entityList)
 					return entityList, nil
 					// curl -g 'http://localhost:8080/graphql?query={entityList{id}}'
@@ -1344,7 +1333,7 @@ func init() {
 					offset, _ := p.Args["offset"].(int)
 					limit, _ := p.Args["limit"].(int)
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					groupList := []groupModel.Group{}
+					groupList := []model.Group{}
 					groupDao.GetAll().Skip(offset).Limit(limit).All(&groupList)
 					return groupList, nil
 				},
@@ -1363,7 +1352,7 @@ func init() {
 					offset, _ := p.Args["offset"].(int)
 					limit, _ := p.Args["limit"].(int)
 					// curl -g 'http://localhost:8080/graphql?query={allTickets{id}}'
-					newsList := []newsModel.News{}
+					newsList := []model.News{}
 					newsDao.GetAll(bson.M{}).Skip(offset).Limit(limit).All(&newsList)
 					return newsList, nil
 				},
@@ -1381,7 +1370,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					offset, _ := p.Args["offset"].(int)
 					limit, _ := p.Args["limit"].(int)
-					orgUnitList := []orgUnitModel.OrgUnit{}
+					orgUnitList := []model.OrgUnit{}
 					orgUnitDao.GetAll().Skip(offset).Limit(limit).All(&orgUnitList)
 					return orgUnitList, nil
 				},
@@ -1399,7 +1388,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					offset, _ := p.Args["offset"].(int)
 					limit, _ := p.Args["limit"].(int)
-					priorityList := []priorityModel.Priority{}
+					priorityList := []model.Priority{}
 					priorityDao.GetAll().Skip(offset).Limit(limit).All(&priorityList)
 					return priorityList, nil
 				},
@@ -1417,7 +1406,7 @@ func init() {
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					offset, _ := p.Args["offset"].(int)
 					limit, _ := p.Args["limit"].(int)
-					tagList := []tagModel.Tag{}
+					tagList := []model.Tag{}
 					tagDao.GetAll().Skip(offset).Limit(limit).All(&tagList)
 					return tagList, nil
 				},
@@ -1449,7 +1438,7 @@ func init() {
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
 					}
-					contact := contactModel.Contact{}
+					contact := model.Contact{}
 					contactDao.GetById(bson.ObjectIdHex(idQuery)).One(&contact)
 					return contact, nil
 				},
@@ -1466,7 +1455,7 @@ func init() {
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
 					}
-					entity := entityModel.Entity{}
+					entity := model.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(idQuery)).One(&entity)
 					return entity, nil
 				},
@@ -1499,7 +1488,7 @@ func init() {
 					if !bson.IsObjectIdHex(idQuery) {
 						return nil, nil
 					}
-					news := newsModel.News{}
+					news := model.News{}
 					newsDao.GetById(bson.ObjectIdHex(idQuery)).One(&news)
 					return news, nil
 				},
@@ -1561,7 +1550,7 @@ func init() {
 					if !bson.IsObjectIdHex(referenceId) {
 						return nil, nil
 					}
-					activityList := []activityModel.Activity{}
+					activityList := []model.Activity{}
 					entityActivityDao.GetAll(referenceId).All(&activityList)
 					return activityList, nil
 				},
@@ -1578,7 +1567,7 @@ func init() {
 					if !bson.IsObjectIdHex(referenceId) {
 						return nil, nil
 					}
-					activityList := []activityModel.Activity{}
+					activityList := []model.Activity{}
 					newsActivityDao.GetAll(referenceId).All(&activityList)
 					return activityList, nil
 				},
@@ -1604,14 +1593,14 @@ func RestAuth() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
 			decoder := json.NewDecoder(r.Body)
-			var account accountModel.Account
+			var account model.Account
 			err := decoder.Decode(&account)
 			if err != nil {
 				panic(err)
 			}
 			defer r.Body.Close()
 			accountDao.GetAll(account).One(&account)
-			jwt := jwtModel.JWT{}
+			jwt := model.JWT{}
 			jwt.JWT = authHandler.CreateJWT(account)
 			jwt.Account = account
 			json.NewEncoder(w).Encode(&jwt)
@@ -1625,7 +1614,7 @@ func RestRegister() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
 			decoder := json.NewDecoder(r.Body)
-			var account accountModel.Account
+			var account model.Account
 			err := decoder.Decode(&account)
 			if err != nil {
 				panic(err)
@@ -1635,7 +1624,7 @@ func RestRegister() http.HandlerFunc {
 			accountDao.Insert(account)
 			account.Roles = []string{"customer"}
 			account.Groups = []string{"customer"}
-			jwt := jwtModel.JWT{}
+			jwt := model.JWT{}
 			jwt.JWT = authHandler.CreateJWT(account)
 			jwt.Account = account
 			json.NewEncoder(w).Encode(&jwt)
@@ -1644,17 +1633,9 @@ func RestRegister() http.HandlerFunc {
 }
 
 func log(fn http.HandlerFunc) http.HandlerFunc {
-	/*
 	return func(w http.ResponseWriter, r *http.Request) {
-    if len(r.URL.Query().Get("key") == 0) {
-      http.Error(w, "missing key", http.StatusUnauthorized)
-      return // don't call original handler
-    }
-    fn(w, r)
-  }
-	 */
-	return func(w http.ResponseWriter, r *http.Request) {
-		tokenString := r.Header.Get("Authorization")
+		fn(w, r)
+		/*tokenString := r.Header.Get("Authorization")
 		if tokenString != "" {
 			token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -1665,10 +1646,10 @@ func log(fn http.HandlerFunc) http.HandlerFunc {
 
 			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 				fmt.Println("Before", claims["accountId"])
-				account := accountModel.Account{}
+				account := model.Account{}
 				account.ID = bson.ObjectIdHex(claims["accountId"].(string))
-				account.Groups = claims["groups"].(string)
-				account.Roles = claims["roles"].(string)
+				account.Groups = claims["groups"].([]string)
+				account.Roles = claims["roles"].([]string)
 				authHandler.CurrentAccount = account
 				fn(w, r)
 			} else {
@@ -1677,7 +1658,7 @@ func log(fn http.HandlerFunc) http.HandlerFunc {
 			}
 		} else {
 			http.Error(w, "missing key", http.StatusUnauthorized)
-		}
+		}*/
 	}
 }
 

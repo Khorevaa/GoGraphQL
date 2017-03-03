@@ -2,7 +2,7 @@ package priorityType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/priorityModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -12,7 +12,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if priority, ok := p.Source.(priorityModel.Priority); ok {
+				if priority, ok := p.Source.(model.Priority); ok {
 					return priority.ID.Hex(), nil
 				}
 				return nil, nil

@@ -1,14 +1,14 @@
 package authHandler
 
 import (
-	"github.com/NiciiA/GoGraphQL/domain/model/accountModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 )
 
-var CurrentAccount accountModel.Account
+var CurrentAccount model.Account
 
-func CreateJWT(account accountModel.Account) string {
+func CreateJWT(account model.Account) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"accountId": account.ID,
 		"groups": account.Groups,

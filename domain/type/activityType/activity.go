@@ -2,11 +2,10 @@ package activityType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/entityModel"
 	"github.com/NiciiA/GoGraphQL/domain/type/contactType"
-	"github.com/NiciiA/GoGraphQL/domain/model/activityModel"
 	"github.com/NiciiA/GoGraphQL/dataaccess/contactDao"
 	"gopkg.in/mgo.v2/bson"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -16,7 +15,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if entity, ok := p.Source.(entityModel.Entity); ok {
+				if entity, ok := p.Source.(model.Entity); ok {
 					return entity.ID.Hex(), nil
 				}
 				return nil, nil
@@ -46,7 +45,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"creator": &graphql.Field{
 			Type: contactType.Type,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if activity, ok := p.Source.(activityModel.Activity); ok {
+				if activity, ok := p.Source.(model.Activity); ok {
 					return contactDao.GetById(bson.ObjectIdHex(activity.Creator)), nil
 				}
 				return nil, nil

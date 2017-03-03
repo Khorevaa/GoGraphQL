@@ -2,7 +2,7 @@ package orgUnitType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/orgUnitModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -12,7 +12,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if orgUnit, ok := p.Source.(orgUnitModel.OrgUnit); ok {
+				if orgUnit, ok := p.Source.(model.OrgUnit); ok {
 					return orgUnit.ID.Hex(), nil
 				}
 				return nil, nil

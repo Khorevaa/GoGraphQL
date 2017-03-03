@@ -3,7 +3,7 @@ package tagDao
 import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"github.com/NiciiA/GoGraphQL/domain/model/tagModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 	"github.com/NiciiA/GoGraphQL/dataaccess/mongoAccess"
 )
 
@@ -11,44 +11,44 @@ var collectionName = "tag"
 
 var session *mgo.Session
 
-var TagList map[bson.ObjectId]tagModel.Tag = make(map[bson.ObjectId]tagModel.Tag)
+var TagList map[bson.ObjectId]model.Tag = make(map[bson.ObjectId]model.Tag)
 
 func GetCollection() *mgo.Collection {
 	return mongoAccess.GetCollection(session, collectionName)
 }
 
-func GetByKey(key bson.ObjectId) tagModel.Tag {
+func GetByKey(key bson.ObjectId) model.Tag {
 	return TagList[key]
 }
 
-func AddTag(c tagModel.Tag) {
+func AddTag(c model.Tag) {
 	TagList[c.ID] = c
 	Insert(c)
 }
 
-func UpdateTag(c tagModel.Tag) {
+func UpdateTag(c model.Tag) {
 	TagList[c.ID] = c
 	Update(c)
 }
 
 func init() {
 	session = mongoAccess.Session.Clone()
-	var tagList []tagModel.Tag
+	var tagList []model.Tag
 	GetAll().All(&tagList)
 	for _, tag := range tagList {
 		AddTag(tag)
 	}
 }
 
-func Insert(tag tagModel.Tag) {
+func Insert(tag model.Tag) {
 	GetCollection().Insert(&tag)
 }
 
-func Update(tag tagModel.Tag) {
+func Update(tag model.Tag) {
 	GetCollection().Update(bson.M{"_id": tag.ID}, &tag)
 }
 
-func Delete(tag tagModel.Tag) {
+func Delete(tag model.Tag) {
 	delete(TagList, tag.ID)
 	GetCollection().Remove(tag.ID)
 }

@@ -2,7 +2,7 @@ package categoryType
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/NiciiA/GoGraphQL/domain/model/categoryModel"
+	"github.com/NiciiA/GoGraphQL/domain/model"
 )
 
 var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
@@ -12,7 +12,7 @@ var Type *graphql.Object = graphql.NewObject(graphql.ObjectConfig{
 		"_id": &graphql.Field{
 			Type: graphql.String,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				if category, ok := p.Source.(categoryModel.Category); ok {
+				if category, ok := p.Source.(model.Category); ok {
 					return category.ID.Hex(), nil
 				}
 				return nil, nil
