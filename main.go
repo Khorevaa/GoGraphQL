@@ -36,6 +36,7 @@ import (
 	"github.com/NiciiA/GoGraphQL/dataaccess/entityActivityDao"
 	"github.com/NiciiA/GoGraphQL/dataaccess/newsActivityDao"
 	"github.com/NiciiA/GoGraphQL/webapp/authHandler"
+	"github.com/NiciiA/GoGraphQL/service/entityService"
 )
 
 var (
@@ -541,7 +542,7 @@ func init() {
 					entity.Priority = priority
 					entity.Category = category
 					entity.CreatedDate = creator
-					entityDao.Insert(entity)
+					entityService.Create(entity)
 					return  entity, nil
 				},
 			},
