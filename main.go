@@ -37,6 +37,9 @@ import (
 	"github.com/NiciiA/GoGraphQL/dataaccess/newsActivityDao"
 	"github.com/NiciiA/GoGraphQL/webapp/authHandler"
 	"github.com/NiciiA/GoGraphQL/service/entityService"
+	"github.com/NiciiA/GoGraphQL/service/newsService"
+	"github.com/NiciiA/GoGraphQL/service/contactService"
+	"github.com/NiciiA/GoGraphQL/service/accountService"
 )
 
 var (
@@ -160,7 +163,7 @@ func init() {
 					account.Phone = phone
 					account.Roles = roles
 					account.Groups = groups
-					accountDao.Insert(account)
+					accountService.Create(account)
 					return  account, nil
 				},
 			},
@@ -202,6 +205,7 @@ func init() {
 					}
 					account := model.Account{}
 					accountDao.GetById(bson.ObjectIdHex(id)).One(&account)
+					preAccount := account
 					account.ModifiedDate = time.Now().Format(time.RFC3339)
 					account.UserName = userName
 					account.Password = password
@@ -209,7 +213,7 @@ func init() {
 					account.Phone = phone
 					account.Roles = roles
 					account.Groups = groups
-					accountDao.Update(account)
+					accountService.Update(preAccount, account)
 					return  account, nil
 				},
 			},
@@ -227,7 +231,7 @@ func init() {
 					}
 					account := model.Account{}
 					accountDao.GetById(bson.ObjectIdHex(id)).One(&account)
-					accountDao.Delete(account)
+					accountService.Remove(account)
 					return  account, nil
 				},
 			},
@@ -249,9 +253,10 @@ func init() {
 					}
 					account := model.Account{}
 					accountDao.GetById(bson.ObjectIdHex(id)).One(&account)
+					preAccount := account
 					account.ModifiedDate = time.Now().Format(time.RFC3339)
 					account.Disabled = disable
-					accountDao.Update(account)
+					accountService.Update(preAccount, account)
 					return  account, nil
 				},
 			},
@@ -387,7 +392,7 @@ func init() {
 					contact.Village = village
 					contact.OrgUnit = orgUnit
 					contact.Accounts = accounts
-					contactDao.Insert(contact)
+					contactService.Create(contact)
 					return  contact, nil
 				},
 			},
@@ -429,6 +434,7 @@ func init() {
 					}
 					contact := model.Contact{}
 					contactDao.GetById(bson.ObjectIdHex(id)).One(&contact)
+					preContact := contact
 					contact.ModifiedDate = time.Now().Format(time.RFC3339)
 					contact.FirstName = firstName
 					contact.LastName = lastName
@@ -436,7 +442,7 @@ func init() {
 					contact.Village = village
 					contact.OrgUnit = orgUnit
 					contact.Accounts = accounts
-					contactDao.Update(contact)
+					contactService.Update(preContact, contact)
 					return  contact, nil
 				},
 			},
@@ -454,7 +460,7 @@ func init() {
 					}
 					contact := model.Contact{}
 					contactDao.GetById(bson.ObjectIdHex(id)).One(&contact)
-					contactDao.Delete(contact)
+					contactService.Remove(contact)
 					return  contact, nil
 				},
 			},
@@ -476,9 +482,10 @@ func init() {
 					}
 					contact := model.Contact{}
 					contactDao.GetById(bson.ObjectIdHex(id)).One(&contact)
+					preContact := contact
 					contact.ModifiedDate = time.Now().Format(time.RFC3339)
 					contact.Disabled = disable
-					contactDao.Update(contact)
+					contactService.Update(preContact, contact)
 					return  contact, nil
 				},
 			},
@@ -597,6 +604,7 @@ func init() {
 					creator, _ := p.Args["creator"].(string)
 					entity := model.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
+					preEntity := entity
 					entity.ModifiedDate = time.Now().Format(time.RFC3339)
 					entity.Subject = subject
 					entity.Description = description
@@ -608,7 +616,7 @@ func init() {
 					entity.Priority = priority
 					entity.Category = category
 					entity.CreatedDate = creator
-					entityDao.Insert(entity)
+					entityService.Update(preEntity, entity)
 					return  entity, nil
 				},
 			},
@@ -623,7 +631,7 @@ func init() {
 					id, _ := p.Args["id"].(string)
 					entity := model.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
-					entityDao.Delete(entity)
+					entityService.Remove(entity)
 					return  entity, nil
 				},
 			},
@@ -642,9 +650,10 @@ func init() {
 					disable, _ := p.Args["disable"].(bool)
 					entity := model.Entity{}
 					entityDao.GetById(bson.ObjectIdHex(id)).One(&entity)
+					preEntity := entity
 					entity.ModifiedDate = time.Now().Format(time.RFC3339)
 					entity.Disabled = disable
-					entityDao.Update(entity)
+					entityService.Update(preEntity, entity)
 					return  entity, nil
 				},
 			},
@@ -836,7 +845,7 @@ func init() {
 					news.Important = important
 					news.Category = category
 					news.Creator = creator
-					newsDao.Insert(news)
+					newsService.Create(news)
 					return  news, nil
 				},
 			},
@@ -883,6 +892,7 @@ func init() {
 					creator, _ := p.Args["creator"].(string)
 					news := model.News{}
 					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
+					preNews := news
 					news.ModifiedDate = time.Now().Format(time.RFC3339)
 					news.Title = title
 					news.Text = text
@@ -892,7 +902,7 @@ func init() {
 					news.Important = important
 					news.Category = category
 					news.Creator = creator
-					newsDao.Update(news)
+					newsService.Update(preNews, news)
 					return  news, nil
 				},
 			},
@@ -907,7 +917,7 @@ func init() {
 					id, _ := p.Args["id"].(string)
 					news := model.News{}
 					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
-					newsDao.Delete(news)
+					newsService.Remove(news)
 					return  news, nil
 				},
 			},
@@ -926,9 +936,10 @@ func init() {
 					disable, _ := p.Args["disable"].(bool)
 					news := model.News{}
 					newsDao.GetById(bson.ObjectIdHex(id)).One(&news)
+					preNews := news
 					news.ModifiedDate = time.Now().Format(time.RFC3339)
 					news.Disabled = disable
-					newsDao.Update(news)
+					newsService.Update(preNews, news)
 					return  news, nil
 				},
 			},
