@@ -40,6 +40,12 @@ import (
 	"github.com/NiciiA/GoGraphQL/service/newsService"
 	"github.com/NiciiA/GoGraphQL/service/contactService"
 	"github.com/NiciiA/GoGraphQL/service/accountService"
+	"github.com/NiciiA/GoGraphQL/service/categoryService"
+	"github.com/NiciiA/GoGraphQL/service/groupService"
+	"github.com/NiciiA/GoGraphQL/service/orgUnitService"
+	"github.com/NiciiA/GoGraphQL/service/priorityService"
+	"github.com/NiciiA/GoGraphQL/service/tagService"
+	"github.com/dgrijalva/jwt-go"
 )
 
 var (
@@ -280,7 +286,7 @@ func init() {
 					category.ModifiedDate = time.Now().Format(time.RFC3339)
 					category.Name = name
 					category.Type = typeCat
-					categoryDao.AddCategory(category)
+					categoryService.Create(category)
 					return  category, nil
 				},
 			},
@@ -308,7 +314,7 @@ func init() {
 					category.ModifiedDate = time.Now().Format(time.RFC3339)
 					category.Name = name
 					category.Type = typeCat
-					categoryDao.UpdateCategory(category)
+					categoryService.Update(category)
 					return  category, nil
 				},
 			},
@@ -325,7 +331,7 @@ func init() {
 						return nil, nil
 					}
 					category := categoryDao.GetByKey(bson.ObjectIdHex(idQuery))
-					categoryDao.Delete(category)
+					categoryService.Remove(category)
 					return category, nil
 				},
 			},
@@ -348,7 +354,7 @@ func init() {
 					category := categoryDao.GetByKey(bson.ObjectIdHex(idQuery))
 					category.ModifiedDate = time.Now().Format(time.RFC3339)
 					category.Disabled = disable
-					categoryDao.UpdateCategory(category)
+					categoryService.Update(category)
 					return  category, nil
 				},
 			},
@@ -728,7 +734,7 @@ func init() {
 					group.CreatedDate = time.Now().Format(time.RFC3339)
 					group.ModifiedDate = time.Now().Format(time.RFC3339)
 					group.Name = name
-					groupDao.AddGroup(group)
+					groupService.Create(group)
 					return  group, nil
 				},
 			},
@@ -751,7 +757,7 @@ func init() {
 					group := groupDao.GetByKey(bson.ObjectIdHex(idQuery))
 					group.ModifiedDate = time.Now().Format(time.RFC3339)
 					group.Name = name
-					groupDao.UpdateGroup(group)
+					groupService.Update(group)
 					return  group, nil
 				},
 			},
@@ -768,7 +774,7 @@ func init() {
 						return nil, nil
 					}
 					group := groupDao.GetByKey(bson.ObjectIdHex(idQuery))
-					groupDao.Delete(group)
+					groupService.Remove(group)
 					return group, nil
 				},
 			},
@@ -791,7 +797,7 @@ func init() {
 					group := groupDao.GetByKey(bson.ObjectIdHex(idQuery))
 					group.ModifiedDate = time.Now().Format(time.RFC3339)
 					group.Disabled = disable
-					groupDao.UpdateGroup(group)
+					groupService.Update(group)
 					return  group, nil
 				},
 			},
@@ -1014,7 +1020,7 @@ func init() {
 					orgUnit.CreatedDate = time.Now().Format(time.RFC3339)
 					orgUnit.ModifiedDate = time.Now().Format(time.RFC3339)
 					orgUnit.Name = name
-					orgUnitDao.AddOrgUnit(orgUnit)
+					orgUnitService.Create(orgUnit)
 					return  orgUnit, nil
 				},
 			},
@@ -1037,7 +1043,7 @@ func init() {
 					orgUnit := orgUnitDao.GetByKey(bson.ObjectIdHex(idQuery))
 					orgUnit.ModifiedDate = time.Now().Format(time.RFC3339)
 					orgUnit.Name = name
-					orgUnitDao.UpdateOrgUnit(orgUnit)
+					orgUnitService.Update(orgUnit)
 					return  orgUnit, nil
 				},
 			},
@@ -1054,7 +1060,7 @@ func init() {
 						return nil, nil
 					}
 					orgUnit := orgUnitDao.GetByKey(bson.ObjectIdHex(idQuery))
-					orgUnitDao.Delete(orgUnit)
+					orgUnitService.Remove(orgUnit)
 					return orgUnit, nil
 				},
 			},
@@ -1077,7 +1083,7 @@ func init() {
 					orgUnit := orgUnitDao.GetByKey(bson.ObjectIdHex(idQuery))
 					orgUnit.ModifiedDate = time.Now().Format(time.RFC3339)
 					orgUnit.Disabled = disable
-					orgUnitDao.UpdateOrgUnit(orgUnit)
+					orgUnitService.Remove(orgUnit)
 					return  orgUnit, nil
 				},
 			},
@@ -1096,7 +1102,7 @@ func init() {
 					priority.CreatedDate = time.Now().Format(time.RFC3339)
 					priority.ModifiedDate = time.Now().Format(time.RFC3339)
 					priority.Name = name
-					priorityDao.AddPriority(priority)
+					priorityService.Create(priority)
 					return  priority, nil
 				},
 			},
@@ -1119,7 +1125,7 @@ func init() {
 					priority := priorityDao.GetByKey(bson.ObjectIdHex(idQuery))
 					priority.ModifiedDate = time.Now().Format(time.RFC3339)
 					priority.Name = name
-					priorityDao.UpdatePriority(priority)
+					priorityService.Update(priority)
 					return  priority, nil
 				},
 			},
@@ -1136,7 +1142,7 @@ func init() {
 						return nil, nil
 					}
 					priority := priorityDao.GetByKey(bson.ObjectIdHex(idQuery))
-					priorityDao.Delete(priority)
+					priorityService.Remove(priority)
 					return priority, nil
 				},
 			},
@@ -1159,7 +1165,7 @@ func init() {
 					priority := priorityDao.GetByKey(bson.ObjectIdHex(idQuery))
 					priority.ModifiedDate = time.Now().Format(time.RFC3339)
 					priority.Disabled = disable
-					priorityDao.UpdatePriority(priority)
+					priorityService.Update(priority)
 					return  priority, nil
 				},
 			},
@@ -1195,7 +1201,7 @@ func init() {
 					tag.ModifiedDate = time.Now().Format(time.RFC3339)
 					tag.Name = name
 					tag.Style = style
-					tagDao.AddTag(tag)
+					tagService.Create(tag)
 					return  tag, nil
 				},
 			},
@@ -1223,7 +1229,7 @@ func init() {
 					tag.ModifiedDate = time.Now().Format(time.RFC3339)
 					tag.Name = name
 					tag.Style = style
-					tagDao.UpdateTag(tag)
+					tagService.Update(tag)
 					return  tag, nil
 				},
 			},
@@ -1240,7 +1246,7 @@ func init() {
 						return nil, nil
 					}
 					tag := tagDao.GetByKey(bson.ObjectIdHex(idQuery))
-					tagDao.Delete(tag)
+					tagService.Remove(tag)
 					return tag, nil
 				},
 			},
@@ -1263,7 +1269,7 @@ func init() {
 					tag := tagDao.GetByKey(bson.ObjectIdHex(idQuery))
 					tag.ModifiedDate = time.Now().Format(time.RFC3339)
 					tag.Disabled = disable
-					tagDao.UpdateTag(tag)
+					tagService.Update(tag)
 					return  tag, nil
 				},
 			},
@@ -1646,8 +1652,8 @@ func RestRegister() http.HandlerFunc {
 
 func log(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		fn(w, r)
-		/*tokenString := r.Header.Get("Authorization")
+		//fn(w, r)
+		tokenString := r.Header.Get("Authorization")
 		if tokenString != "" {
 			token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -1670,7 +1676,7 @@ func log(fn http.HandlerFunc) http.HandlerFunc {
 			}
 		} else {
 			http.Error(w, "missing key", http.StatusUnauthorized)
-		}*/
+		}
 	}
 }
 
