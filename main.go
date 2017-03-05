@@ -714,17 +714,13 @@ func init() {
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
-					"referenceId": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.String),
-					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
-					referenceId, _ := p.Args["referenceId"].(string)
 					activity := model.Activity{}
 					entity := model.Entity{}
-					entityDao.GetById(bson.ObjectIdHex(referenceId)).One(&entity)
 					entityActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
+					entityDao.GetById(bson.ObjectIdHex(activity.ReferenceId)).One(&entity)
 					entityActivityService.Remove(entity, activity)
 					return  activity, nil
 				},
@@ -1006,17 +1002,13 @@ func init() {
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
-					"referenceId": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.String),
-					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
-					referenceId, _ := p.Args["referenceId"].(string)
 					activity := model.Activity{}
 					news := model.News{}
-					newsDao.GetById(bson.ObjectIdHex(referenceId)).One(&news)
 					newsActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
+					newsDao.GetById(bson.ObjectIdHex(activity.ReferenceId)).One(&news)
 					newsActivityService.Remove(news, activity)
 					return  activity, nil
 				},
