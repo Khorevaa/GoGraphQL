@@ -46,6 +46,8 @@ import (
 	"github.com/NiciiA/GoGraphQL/service/priorityService"
 	"github.com/NiciiA/GoGraphQL/service/tagService"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/NiciiA/GoGraphQL/service/entityActivityService"
+	"github.com/NiciiA/GoGraphQL/service/newsActivityService"
 )
 
 var (
@@ -691,6 +693,8 @@ func init() {
 					intern, _ := p.Args["intern"].(bool)
 					creator, _ := p.Args["creator"].(string)
 					activity := model.Activity{}
+					entity := model.Entity{}
+					entityDao.GetById(bson.ObjectIdHex(referenceId)).One(&entity)
 					activity.ID = bson.NewObjectId()
 					activity.Disabled = false
 					activity.CreatedDate = time.Now().Format(time.RFC3339)
@@ -700,7 +704,7 @@ func init() {
 					activity.Comment = comment
 					activity.Intern = intern
 					activity.Creator = creator
-					entityActivityDao.Insert(activity)
+					entityActivityService.Create(entity, activity)
 					return  activity, nil
 				},
 			},
@@ -710,12 +714,18 @@ func init() {
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
+					"referenceId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
+					referenceId, _ := p.Args["referenceId"].(string)
 					activity := model.Activity{}
+					entity := model.Entity{}
+					entityDao.GetById(bson.ObjectIdHex(referenceId)).One(&entity)
 					entityActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
-					entityActivityDao.Delete(activity)
+					entityActivityService.Remove(entity, activity)
 					return  activity, nil
 				},
 			},
@@ -986,7 +996,7 @@ func init() {
 					activity.Comment = comment
 					activity.Intern = intern
 					activity.Creator = creator
-					newsActivityDao.Insert(activity)
+					newsActivityService.Create(activity)
 					return  activity, nil
 				},
 			},
@@ -996,12 +1006,18 @@ func init() {
 					"id": &graphql.ArgumentConfig{
 						Type: graphql.NewNonNull(graphql.String),
 					},
+					"referenceId": &graphql.ArgumentConfig{
+						Type: graphql.NewNonNull(graphql.String),
+					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					id, _ := p.Args["id"].(string)
+					referenceId, _ := p.Args["referenceId"].(string)
 					activity := model.Activity{}
+					news := model.News{}
+					newsDao.GetById(bson.ObjectIdHex(referenceId)).One(&news)
 					newsActivityDao.GetById(bson.ObjectIdHex(id)).One(&activity)
-					newsActivityDao.Delete(activity)
+					newsActivityService.Remove(news, activity)
 					return  activity, nil
 				},
 			},
@@ -1663,7 +1679,6 @@ func log(fn http.HandlerFunc) http.HandlerFunc {
 			})
 
 			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-				fmt.Println("Before", claims["accountId"])
 				account := model.Account{}
 				account.ID = bson.ObjectIdHex(claims["accountId"].(string))
 				account.Groups = claims["groups"].([]string)
@@ -1671,7 +1686,6 @@ func log(fn http.HandlerFunc) http.HandlerFunc {
 				authHandler.CurrentAccount = account
 				fn(w, r)
 			} else {
-				fmt.Println("After")
 				http.Error(w, "missing key", http.StatusUnauthorized)
 			}
 		} else {
