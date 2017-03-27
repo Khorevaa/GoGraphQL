@@ -1619,19 +1619,18 @@ func RestAuth() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "POST" {
 			decoder := json.NewDecoder(r.Body)
-			var account model.Account
-			err := decoder.Decode(&account)
+			bodyAccount := model.Account{}
+			account := model.Account{}
+			err := decoder.Decode(&bodyAccount)
 			if err != nil {
 				panic(err)
 			}
 			defer r.Body.Close()
-			accountDao.GetCollection().Find(account).One(&account)
+			accountDao.GetAll(bson.M{"eMail": bodyAccount.EMail, "password": bodyAccount.Password}).One(&account)
 			jwt := model.JWT{}
 			jwt.JWT = authHandler.CreateJWT(account)
 			jwt.Account = account
 			json.NewEncoder(w).Encode(&jwt)
-			cookie := http.Cookie{HttpOnly:true, Name:"jwt",Value:jwt.JWT,MaxAge:0}
-			http.SetCookie(w, &cookie)
 		}
 	}
 }
