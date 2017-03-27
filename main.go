@@ -1625,7 +1625,7 @@ func RestAuth() http.HandlerFunc {
 				panic(err)
 			}
 			defer r.Body.Close()
-			accountDao.GetAll(account).One(&account)
+			accountDao.GetCollection().Find(account).One(&account)
 			jwt := model.JWT{}
 			jwt.JWT = authHandler.CreateJWT(account)
 			jwt.Account = account
@@ -1647,9 +1647,9 @@ func RestRegister() http.HandlerFunc {
 			}
 			defer r.Body.Close()
 			account.ID = bson.NewObjectId()
-			accountDao.Insert(account)
 			account.Roles = []string{"customer"}
 			account.Groups = []string{"customer"}
+			accountDao.Insert(account)
 			jwt := model.JWT{}
 			jwt.JWT = authHandler.CreateJWT(account)
 			jwt.Account = account
