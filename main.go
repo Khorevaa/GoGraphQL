@@ -1617,6 +1617,8 @@ func main() {
 
 func RestAuth() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		if r.Method == "POST" {
 			decoder := json.NewDecoder(r.Body)
 			bodyAccount := model.Account{}
@@ -1637,6 +1639,8 @@ func RestAuth() http.HandlerFunc {
 
 func RestRegister() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		if r.Method == "POST" {
 			decoder := json.NewDecoder(r.Body)
 			var account model.Account
@@ -1648,6 +1652,9 @@ func RestRegister() http.HandlerFunc {
 			account.ID = bson.NewObjectId()
 			account.Roles = []string{"customer"}
 			account.Groups = []string{"customer"}
+			account.Disabled = false
+			account.CreatedDate = time.Now().Format(time.RFC3339)
+			account.ModifiedDate = time.Now().Format(time.RFC3339)
 			accountDao.Insert(account)
 			jwt := model.JWT{}
 			jwt.JWT = authHandler.CreateJWT(account)
@@ -1659,6 +1666,8 @@ func RestRegister() http.HandlerFunc {
 
 func log(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		//fn(w, r)
 		tokenString := r.Header.Get("Authorization")
 		if tokenString != "" {
